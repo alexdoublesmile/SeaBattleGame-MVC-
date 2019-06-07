@@ -41,9 +41,9 @@ public class Controller {
 	void startBattle(Player player, View view, BattleField field) {
 		view.startBattle();
 		while(field.checkBattleForce()) {
-			view.showBattleField();
+			view.showBattleField(field.getField());
 			field.makeShot();
-			field.takeShot(field.getField(), input.getSomeString());
+			field.takeShot(field.getField(), input.getSomeString(), view);
 			view.tempResult(player, view, field);
 		}
 		finalResult(player, view);

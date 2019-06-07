@@ -39,15 +39,44 @@ public class BattleField {
 	}
 	
 	void makeShot() {
-		
+		//ToDo
 		
 	}
 
-	void takeShot(HashMap<String, Integer> field, String s) {
-		field.put(s, 1);
+	void takeShot(HashMap<String, Integer> field, String s, View view) {
+		view.showBattleField(field);
+		switch(field.get(s)) {
+		case(0):	
+			if(!(checkNearbyPlaces(field, s))) {
+				view.deathShot();
+				field.put(s, 3);
+				takeShot(field, s, view);
+				break;				
+			} else {
+				view.niceShot();
+				field.put(s, 2);
+				takeShot(field, s, view);
+				break;
+			}
+		case(1):
+			view.dryShot();
+			break;
+		case(2):
+		case(3):
+			view.doubleVisit();
+			takeShot(field, s, view);
+			break;
+		default:
+			view.repeatPlease();
+			takeShot(field, s, view);
+			break;
+		}
 	}
 	
-	
+	boolean checkNearbyPlaces(HashMap<String, Integer> field, String s) {
+		
+		return true;
+	}
 	
 	void showField() {
 		for (HashMap.Entry<String, Integer> entry : getField().entrySet()) {

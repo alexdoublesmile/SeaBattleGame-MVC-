@@ -1,0 +1,120 @@
+package com.plohoy.seabattle.main;
+
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Random;
+
+import com.plohoy.seabattle.model.*;
+import com.plohoy.seabattle.view.*;
+
+public class SeaBattleController {
+	SeaBattleModel theModel;	
+	SeaBattleView theView;
+//	Field theField;
+	
+	SeaBattleController(SeaBattleModel theModel, SeaBattleView theView) {
+		
+		this.theModel = theModel;		
+		this.theView = theView;
+		theModel.setGameOver(false);
+		theModel.createShips(theView.getBattlefieldSize());
+		theModel.createShots();
+		theModel.createLabels();
+		theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
+
+		theView.addShotListener(new shotListener());
+	}
+	
+	class shotListener extends MouseAdapter {
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			super.mouseReleased(e);
+			int x = e.getX()/theView.getCELL_OPP_PX_SIZE();
+			int y = e.getY()/theView.getCELL_OPP_PX_SIZE();
+			
+//			System.out.println("------------------------------------------------");
+//			System.out.println("координата х: " + x);	
+//			System.out.println("координата y: " + y);
+//			System.out.println("------------------------------------------------");
+			
+			if(e.getButton() == theView.getMOUSE_BUTTON_LEFT() && !theModel.isGameOver()) {
+//				System.out.println("клацаю левой кнопочкой!");
+				theModel.getPlayerShots().add(x, y, true);
+				
+//				System.out.println("------------------------------------------------");	
+//				System.out.println("—писок выстрелов:");
+//				int n = 1;
+//				for(Shot shot : theModel.getPlayerShots().getShots()) {
+//					System.out.println(" оординаты " + n + " выстрела: (" + shot.getxCoord() + ", " + shot.getyCoord() + ").");
+//					n++;				
+//				}
+//				System.out.println("------------------------------------------------");	
+				
+				if(theModel.getOpponentShips().checkHit(x, y)) {
+
+
+					if(!theModel.getOpponentShips().checkSurvivors()) {
+						theModel.setGameOver(true);
+					}
+					
+				} else {
+//					System.out.println("------------------------------------------------");
+//					System.out.println("не попал!");
+//					System.out.println("тут ходит оппонент");
+					opponentShoots();
+					theView.getOpponentBattleFieldPanel().repaint();
+					theView.getPlayerBattleFieldPanel().repaint();
+//					System.out.println("------------------------------------------------");
+				}
+//				System.out.println("--------------------- тут должна быть перерисовка ---------------------------");
+				theView.getOpponentBattleFieldPanel().repaint();
+//				theView.repaintAll();
+			}
+			if(e.getButton() == theView.getMOUSE_BUTTON_RIGHT()) {
+				System.out.println("клацаю правой кнопочкой!");
+			}
+		}		
+	}
+	
+	public void opponentShoots() {
+		Random random = new Random();
+		int x, y;
+		do {
+			x = random.nextInt(theView.getBattlefieldSize());
+			y = random.nextInt(theView.getBattlefieldSize());
+			
+			System.out.println("------------------------------------------------");
+			System.out.println("координата х: " + x);	
+			System.out.println("координата y: " + y);
+			System.out.println("------------------------------------------------");
+			
+
+			
+		} while(theModel.getOpponentShots().hitSamePlace(x, y));
+		theModel.getOpponentShots().add(x, y, true);
+		
+		System.out.println("------------------------------------------------");	
+		System.out.println("—писок выстрелов:");
+		int n = 1;
+		for(Shot shot : theModel.getOpponentShots().getShots()) {
+			System.out.println(" оординаты " + n + " выстрела: (" + shot.getxCoord() + ", " + shot.getyCoord() + ").");
+			n++;				
+		}
+		System.out.println("------------------------------------------------");	
+		
+		if (!theModel.getPlayerShips().checkHit(x, y)) {
+			System.out.println("оппонент промазал!!!");
+			return;
+		} else {
+			System.out.println("оппонент попал пр€мо в €блочко!!!");
+			if(!theModel.getPlayerShips().checkSurvivors()) {
+				System.out.println("это проигрыш...");
+				theModel.setGameOver(true);
+			} else {
+				opponentShoots();
+			}
+		}
+		
+	}
+}

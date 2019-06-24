@@ -60,8 +60,8 @@ public class SeaBattleController {
 //			System.out.println("размер €чейки: " + theView.getCELL_PLAYER_PX_SIZE());	
 //			System.out.println("мои координаты y: (" + e.getX() + ", " + e.getY() + ")");
 //			System.out.println("------------------------------------------------");
-			int x = e.getX()/(theView.getCELL_PLAYER_PX_SIZE() * 9 / 10);
-			int	y = e.getY()/(theView.getCELL_PLAYER_PX_SIZE() * 9 / 10);
+			int x = e.getX()/(theView.getCELL_PLAYER_PX_SIZE());
+			int	y = e.getY()/(theView.getCELL_PLAYER_PX_SIZE());
 //			System.out.println("------------------------------------------------");
 //			System.out.println("размер €чейки: " + theView.getCELL_PLAYER_PX_SIZE());	
 //			System.out.println("мои координаты y: (" + e.getX() + ", " + e.getY() + ")");

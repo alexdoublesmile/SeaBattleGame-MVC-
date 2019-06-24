@@ -13,7 +13,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	private int battlefieldSize = 10;
 
 	private final int FIELD_PLAYER_PX_SIZE = 500;
-	private final int FIELD_OPP_PX_SIZE = 450;
+	private final int FIELD_OPP_PX_SIZE = 500;
 
 	private final int CELL_PLAYER_PX_SIZE = FIELD_PLAYER_PX_SIZE / battlefieldSize;
 	private final int CELL_OPP_PX_SIZE = FIELD_OPP_PX_SIZE / battlefieldSize;
@@ -40,8 +40,8 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		this.answerChoice = answer;
 	}
 
-	BattleFieldPanel playerBattleFieldPanel;
-	BattleFieldPanel opponentBattleFieldPanel;
+	BattleFieldPlayerPanel playerBattleFieldPanel;
+	BattleFieldOpponentPanel opponentBattleFieldPanel;
 	
 	Field playerShips;
 	Field opponentShips;
@@ -126,11 +126,11 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		this.opponentShots = opponentShots;
 		this.opponentLabels = opponentLabels;
 
-		playerBattleFieldPanel = new BattleFieldPanel();
+		playerBattleFieldPanel = new BattleFieldPlayerPanel();
 		playerBattleFieldPanel.setPreferredSize(new Dimension(FIELD_PLAYER_PX_SIZE, FIELD_PLAYER_PX_SIZE));
 		playerBattleFieldPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
 		playerBattleFieldPanel.setBackground(Color.blue);
-		opponentBattleFieldPanel = new BattleFieldPanel();
+		opponentBattleFieldPanel = new BattleFieldOpponentPanel();
 		opponentBattleFieldPanel.setPreferredSize(new Dimension(FIELD_OPP_PX_SIZE, FIELD_OPP_PX_SIZE));
 		opponentBattleFieldPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
 		opponentBattleFieldPanel.setBackground(Color.blue);
@@ -152,9 +152,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 				
 	}
 
-	class BattleFieldPanel extends JPanel {
-		BattleFieldPanel() {	
-		}		
+	class BattleFieldPlayerPanel extends JPanel {
 		@Override
 		public void paint(Graphics g) {
 			super.paint(g);
@@ -169,44 +167,66 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 				g2.draw(verticalLines);
 			}
 			// paint of ships and shots
-			if(cellSize == CELL_OPP_PX_SIZE) {
-				for(Shot shot : playerShots.getShots()) {
-					g2.setColor(Color.gray);
-					g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 22, shot.getYCoord()*cellSize + cellSize/2 - 22, 44, 44);
-				}
-				g2.setColor(Color.green);
-				for(Ship ship : opponentShips.getBattleField()) {
-					for(Cell cell : ship.getCells()) {
-						if(!cell.isCellAlive()) {
-							g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
-						} 
-					}
-				}
-			} else {
-				for(Shot shot : opponentShots.getShots()) {
-					for(Ship ship : playerShips.getBattleField()) {
-						for(Cell cell : ship.getCells()) {
-							if(!cell.isCellAlive()) {
-								g2.setColor(Color.red);
-								g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 24, shot.getYCoord()*cellSize + cellSize/2 - 24, 48, 48);
-							}
-						}
-					}
-					g2.setColor(Color.gray);
-					g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 24, shot.getYCoord()*cellSize + cellSize/2 - 24, 48, 48);
-				}
-				g2.setColor(Color.green);
+			
+			
+			
+
+
+			for(Shot shot : opponentShots.getShots()) {
 				for(Ship ship : playerShips.getBattleField()) {
 					for(Cell cell : ship.getCells()) {
-						if((cell.isCellAlive())) {
-							g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
-						} else {
-							
+						if(!cell.isCellAlive()) {
 							g2.setColor(Color.red);
-							g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
-							g2.setColor(Color.green);
+							g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 24, shot.getYCoord()*cellSize + cellSize/2 - 24, 48, 48);
 						}
 					}
+				}
+				g2.setColor(Color.gray);
+				g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 24, shot.getYCoord()*cellSize + cellSize/2 - 24, 48, 48);
+			}
+			g2.setColor(Color.green);
+			for(Ship ship : playerShips.getBattleField()) {
+				for(Cell cell : ship.getCells()) {
+					if((cell.isCellAlive())) {
+						g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
+					} else {
+						
+						g2.setColor(Color.red);
+						g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
+						g2.setColor(Color.green);
+					}
+				}
+			}
+			
+			
+		}
+	}
+	
+	class BattleFieldOpponentPanel extends JPanel {
+		@Override
+		public void paint(Graphics g) {
+			super.paint(g);
+			int cellSize = (int) getSize().getWidth() / battlefieldSize;
+			Graphics2D g2 = (Graphics2D) g;
+			g2.setColor(Color.lightGray);
+			
+			for(int i = 0; i <= battlefieldSize; i++) {
+				Line2D horizontalLines = new Line2D.Double(0, i*cellSize, battlefieldSize*cellSize, i*cellSize);
+				Line2D verticalLines = new Line2D.Double(i*cellSize, 0, i*cellSize, battlefieldSize*cellSize);
+				g2.draw(horizontalLines);
+				g2.draw(verticalLines);
+			}
+			// paint of ships and shots
+			for(Shot shot : playerShots.getShots()) {
+				g2.setColor(Color.gray);
+				g2.fillRect(shot.getXCoord()*cellSize + cellSize/2 - 24, shot.getYCoord()*cellSize + cellSize/2 - 24, 48, 48);
+			}
+			g2.setColor(Color.red);
+			for(Ship ship : opponentShips.getBattleField()) {
+				for(Cell cell : ship.getCells()) {
+					if(!cell.isCellAlive()) {
+						g2.fill3DRect(cell.getXCoord()*cellSize + 1, cell.getYCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
+					} 
 				}
 			}
 		}

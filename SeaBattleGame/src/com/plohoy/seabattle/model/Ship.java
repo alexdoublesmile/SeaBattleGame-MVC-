@@ -1,21 +1,20 @@
 package com.plohoy.seabattle.model;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Random;
 
 public class Ship {
 
 	private ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> aroundCells = new ArrayList<Cell>();
 
-	private HashSet<Cell> killDublicatesInAroundCells;
+	private HashSet<Cell> killAroundCellsDuplicate;
 	
 	
 //	public void createAroundCells() {
 //		for(Cell cell : cells) {
 //			for(int xCell = -1; xCell < 2; xCell++) {
 //				for(int yCell = -1; yCell < 2; yCell++) {
-//					if(!(cell.getxCoord() == xCell && cell.getyCoord() == yCell))
+//					if(!(cell.getXCoord() == xCell && cell.getYCoord() == yCell))
 //					aroundCells.add(new Cell(xCell, yCell));
 //				}
 //			}
@@ -52,34 +51,34 @@ public class Ship {
 		for(Cell cell : cells) {
 			for(int xCell = -1; xCell < 2; xCell++) {
 				for(int yCell = -1; yCell < 2; yCell++) {
-					if(!(cell.getxCoord() == cell.getxCoord() + xCell && 
-						cell.getyCoord() == cell.getyCoord() + yCell ||
-						 (cell.getxCoord() + xCell < 0 || cell.getxCoord() + xCell > fieldSize - 1) ||
-						 (cell.getyCoord() + yCell < 0 || cell.getyCoord() + yCell > fieldSize - 1)
+					if(!(cell.getXCoord() == cell.getXCoord() + xCell && 
+						cell.getYCoord() == cell.getYCoord() + yCell ||
+						 (cell.getXCoord() + xCell < 0 || cell.getXCoord() + xCell > fieldSize - 1) ||
+						 (cell.getYCoord() + yCell < 0 || cell.getYCoord() + yCell > fieldSize - 1)
 						 ))
-					aroundCells.add(new Cell(cell.getxCoord() + xCell, cell.getyCoord() + yCell));
+					aroundCells.add(new Cell(cell.getXCoord() + xCell, cell.getYCoord() + yCell));
 				}
 			}
 		}
 		
 		for(Cell cell : cells) {
 			for(int i = 0; i < aroundCells.size(); i++) {
-				if((cell.getxCoord() == aroundCells.get(i).getxCoord() &&
-				  cell.getyCoord() == aroundCells.get(i).getyCoord())) {
+				if((cell.getXCoord() == aroundCells.get(i).getXCoord() &&
+				  cell.getYCoord() == aroundCells.get(i).getYCoord())) {
 					aroundCells.remove(aroundCells.get(i));
 				}
 			}
 		}
 		
-		killDublicatesInAroundCells = new HashSet<Cell>(aroundCells);
+		killAroundCellsDuplicate = new HashSet<Cell>(aroundCells);
 		aroundCells.clear();
-		aroundCells.addAll(killDublicatesInAroundCells);
+		aroundCells.addAll(killAroundCellsDuplicate);
 		
 //		System.out.println("------------------------------------------------");	
 //		System.out.println("Проверка Корабля");
 //		int n = 1;
 //		for(Cell cell : cells) {
-//			System.out.println("Корабль: координаты ячейки № " + n + ": " + cell.getxCoord() + ", " + cell.getyCoord());
+//			System.out.println("Корабль: координаты ячейки № " + n + ": " + cell.getXCoord() + ", " + cell.getYCoord());
 //			n++;
 //		}
 //		System.out.println("------------------------------------------------");	
@@ -88,7 +87,7 @@ public class Ship {
 //		System.out.println("Проверка окружения Корабля");
 //		int q = 1;
 //		for(Cell cell : aroundCells) {
-//			System.out.println("Координаты ячейки № " + q + ": " + cell.getxCoord() + ", " + cell.getyCoord());
+//			System.out.println("Координаты ячейки № " + q + ": " + cell.getXCoord() + ", " + cell.getYCoord());
 //			q++;
 //		}
 //		System.out.println("------------------------------------------------");
@@ -104,8 +103,8 @@ public class Ship {
 
 	public boolean isShipOutOfField(int bottom, int top) {
 		for(Cell cell : cells) {
-			if(cell.getxCoord() < bottom || cell.getxCoord() > top ||
-			   cell.getyCoord() < bottom || cell.getyCoord() > top	) {
+			if(cell.getXCoord() < bottom || cell.getXCoord() > top ||
+			   cell.getYCoord() < bottom || cell.getYCoord() > top	) {
 				return true;
 			}
 		}

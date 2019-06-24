@@ -1,7 +1,6 @@
 package com.plohoy.seabattle.model;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class Cell {
 
@@ -14,19 +13,19 @@ public class Cell {
 		this.yCoord = y;
 	}
 
-	public int getxCoord() {
+	public int getXCoord() {
 		return xCoord;
 	}
 
-	public void setxCoord(int xCoord) {
+	public void setXCoord(int xCoord) {
 		this.xCoord = xCoord;
 	}
 
-	public int getyCoord() {
+	public int getYCoord() {
 		return yCoord;
 	}
 
-	public void setyCoord(int yCoord) {
+	public void setYCoord(int yCoord) {
 		this.yCoord = yCoord;
 	}
 
@@ -40,10 +39,10 @@ public class Cell {
 	
 	public boolean isCellNotDetached(ArrayList<Cell> cells, Cell ctrlCell) {		
 		for(Cell cell : cells) {			
-			for(int dx = -1; dx < 2; dx++) {				
-				for(int dy = -1; dy < 2; dy++) {				
-					if(ctrlCell.getxCoord() == cell.getxCoord() + dx &&
-						ctrlCell.getyCoord() == cell.getyCoord() + dy) {
+			for(int xCell = -1; xCell < 2; xCell++) {				
+				for(int yCell = -1; yCell < 2; yCell++) {				
+					if(ctrlCell.getXCoord() == cell.getXCoord() + xCell &&
+						ctrlCell.getYCoord() == cell.getYCoord() + yCell) {
 						return true;
 					}
 				}

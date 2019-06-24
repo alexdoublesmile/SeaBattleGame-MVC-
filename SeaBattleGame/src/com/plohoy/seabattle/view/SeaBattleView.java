@@ -7,36 +7,9 @@ import javax.swing.JPanel;
 
 public interface SeaBattleView {
 
-//	void showBattleField(Object obj);
-//	void displayErrorMessage(String message);
 	void addShotListener(MouseListener shotListener);
 
-
 	int getBattlefieldSize();
-
-//	void paintShips(Graphics g, JPanel panel, Field field);
-
-//	JPanel getPlayerBattleFieldPanel();
-//
-//	JPanel getAiBattleFieldPanel();
-
-//	void paintField(Field humanField, Field aIField);
-	
-	int getMOUSE_BUTTON_LEFT();
-
-	int getMOUSE_BUTTON_RIGHT();
-
-//	void repaintAIField(Graphics2D g2);
-
-//	void repaintPlayerField(Graphics2D g2);
-
-//	void repaintWithShips(Graphics2D g2, boolean hide);
-
-//	Graphics2D getFieldView();
-
-//	void viewPlayer(Field playerField, Shots playerShots, Labels playerLabels);
-//
-//	void viewOpponent(Field opponentField, Shots opponentShots, Labels opponentLabels);
 
 	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
 			Labels opponentLabels);
@@ -56,7 +29,58 @@ public interface SeaBattleView {
 
 
 	void displayMessage(String message);
+
+
+	int checkIsItLabel();
+
+
+	int checkIsItShot();
+
+
+	String getLOOSER_MESSAGE();
+
+
+	String getWINNER_MESSAGE();
+
+
+	void setBattlefieldSize(int battlefieldSize);
+
+	void displayConfirmMessage(String message);
+
+	String getAGAIN_MESSAGE();
+
+	int getAnswerChoice();
+
+	void setAnswerChoice(int answer);
 }
+
+//void showBattleField(Object obj);
+//void displayErrorMessage(String message);
+
+//void paintShips(Graphics g, JPanel panel, Field field);
+
+//JPanel getPlayerBattleFieldPanel();
+//
+//JPanel getAiBattleFieldPanel();
+
+//void paintField(Field humanField, Field aIField);
+
+//int getMOUSE_BUTTON_LEFT();
+//
+//int getMOUSE_BUTTON_RIGHT();
+
+//void repaintAIField(Graphics2D g2);
+
+//void repaintPlayerField(Graphics2D g2);
+
+//void repaintWithShips(Graphics2D g2, boolean hide);
+
+//Graphics2D getFieldView();
+
+//void viewPlayer(Field playerField, Shots playerShots, Labels playerLabels);
+//
+//void viewOpponent(Field opponentField, Shots opponentShots, Labels opponentLabels);
+
 
 /*
   	void startGame();

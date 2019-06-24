@@ -19,9 +19,9 @@ public class Shots {
 		shots.add(new Shot(x, y, shot));
 	}
 	
-	public boolean hitSamePlace(int x, int y) {
+	public boolean shotSamePlace(int x, int y) {
 		for(Shot shot : shots) {
-			if(shot.getxCoord() == x && shot.getyCoord() == y) {
+			if(shot.getXCoord() == x && shot.getYCoord() == y) {
 				return true;
 			}
 		}

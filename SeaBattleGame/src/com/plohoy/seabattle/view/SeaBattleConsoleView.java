@@ -34,18 +34,6 @@ public class SeaBattleConsoleView implements SeaBattleView{
 	}
 
 	@Override
-	public int getMOUSE_BUTTON_LEFT() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getMOUSE_BUTTON_RIGHT() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
 	public void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField,
 			Shots opponentShots, Labels opponentLabels) {
 		// TODO Auto-generated method stub
@@ -91,6 +79,60 @@ public class SeaBattleConsoleView implements SeaBattleView{
 
 	@Override
 	public void displayMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int checkIsItLabel() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int checkIsItShot() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String getLOOSER_MESSAGE() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getWINNER_MESSAGE() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setBattlefieldSize(int battlefieldSize) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void displayConfirmMessage(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getAGAIN_MESSAGE() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getAnswerChoice() {
+		// TODO Auto-generated method stub
+		return (Integer) null;
+	}
+
+	@Override
+	public void setAnswerChoice(int answer) {
 		// TODO Auto-generated method stub
 		
 	}

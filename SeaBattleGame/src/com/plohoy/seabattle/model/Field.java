@@ -95,7 +95,7 @@ public class Field {
 		return false;
 	}
 	
-	public boolean checkSurvivors() {
+	public boolean checkAnyShipAlive() {
 		for(Ship ship : battleField) {
 			if(ship.isShipAlive()) {
 				return true;

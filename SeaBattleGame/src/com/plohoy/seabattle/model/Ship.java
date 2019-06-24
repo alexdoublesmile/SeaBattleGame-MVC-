@@ -1,12 +1,39 @@
 package com.plohoy.seabattle.model;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Ship {
 
 	private ArrayList<Cell> cells = new ArrayList<Cell>();
+	private ArrayList<Cell> aroundCells = new ArrayList<Cell>();
+
+	private HashSet<Cell> killDublicatesInAroundCells;
 	
-	Ship(int x, int y, int lenght, int position) {
+	
+//	public void createAroundCells() {
+//		for(Cell cell : cells) {
+//			for(int xCell = -1; xCell < 2; xCell++) {
+//				for(int yCell = -1; yCell < 2; yCell++) {
+//					if(!(cell.getxCoord() == xCell && cell.getyCoord() == yCell))
+//					aroundCells.add(new Cell(xCell, yCell));
+//				}
+//			}
+//		}
+//	}
+	
+	
+//	private boolean justBeenHit = false;
+//	
+//	public boolean isJustBeenHit() {
+//		return justBeenHit;
+//	}
+//
+//	public void setJustBeenHit(boolean justBeenHit) {
+//		this.justBeenHit = justBeenHit;
+//	}
+
+	Ship(int x, int y, int lenght, int position, int fieldSize) {
 //		System.out.println("------------------------------------------------");	
 //		System.out.println("начальные координаты корабля: " + x + ", " + y);
 //		System.out.println("размер корабля: " + lenght);
@@ -22,6 +49,32 @@ public class Ship {
 							   y + i*((position == 1)? 1 : 0)));
 		}		
 
+		for(Cell cell : cells) {
+			for(int xCell = -1; xCell < 2; xCell++) {
+				for(int yCell = -1; yCell < 2; yCell++) {
+					if(!(cell.getxCoord() == cell.getxCoord() + xCell && 
+						cell.getyCoord() == cell.getyCoord() + yCell ||
+						 (cell.getxCoord() + xCell < 0 || cell.getxCoord() + xCell > fieldSize - 1) ||
+						 (cell.getyCoord() + yCell < 0 || cell.getyCoord() + yCell > fieldSize - 1)
+						 ))
+					aroundCells.add(new Cell(cell.getxCoord() + xCell, cell.getyCoord() + yCell));
+				}
+			}
+		}
+		
+		for(Cell cell : cells) {
+			for(int i = 0; i < aroundCells.size(); i++) {
+				if((cell.getxCoord() == aroundCells.get(i).getxCoord() &&
+				  cell.getyCoord() == aroundCells.get(i).getyCoord())) {
+					aroundCells.remove(aroundCells.get(i));
+				}
+			}
+		}
+		
+		killDublicatesInAroundCells = new HashSet<Cell>(aroundCells);
+		aroundCells.clear();
+		aroundCells.addAll(killDublicatesInAroundCells);
+		
 //		System.out.println("------------------------------------------------");	
 //		System.out.println("Проверка Корабля");
 //		int n = 1;
@@ -30,14 +83,23 @@ public class Ship {
 //			n++;
 //		}
 //		System.out.println("------------------------------------------------");	
+//		
+//		System.out.println("------------------------------------------------");	
+//		System.out.println("Проверка окружения Корабля");
+//		int q = 1;
+//		for(Cell cell : aroundCells) {
+//			System.out.println("Координаты ячейки № " + q + ": " + cell.getxCoord() + ", " + cell.getyCoord());
+//			q++;
+//		}
+//		System.out.println("------------------------------------------------");
 	}
 	
 	public ArrayList<Cell> getCells() {
 		return cells;
 	}
 
-	public void setCells(ArrayList<Cell> cells) {
-		this.cells = cells;
+	public ArrayList<Cell> getAroundCells() {
+		return aroundCells;
 	}
 
 	public boolean isShipOutOfField(int bottom, int top) {

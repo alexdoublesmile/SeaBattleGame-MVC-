@@ -88,8 +88,9 @@ public class SeaBattleConsoleView implements SeaBattleView{
 		return 0;
 	}
 
+
 	@Override
-	public void displayErrorMessage(String message) {
+	public void displayMessage(String message) {
 		// TODO Auto-generated method stub
 		
 	}

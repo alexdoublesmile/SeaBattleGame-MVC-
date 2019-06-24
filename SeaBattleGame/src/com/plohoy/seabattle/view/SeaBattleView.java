@@ -54,7 +54,8 @@ public interface SeaBattleView {
 	int getCELL_OPP_PX_SIZE();
 
 
-	void displayErrorMessage(String message);
+
+	void displayMessage(String message);
 }
 
 /*

@@ -61,6 +61,4 @@ public class SeaBattleModel {
 	public boolean getGameOver() {
 		return gameOver;
 	}
-	
-	
 }

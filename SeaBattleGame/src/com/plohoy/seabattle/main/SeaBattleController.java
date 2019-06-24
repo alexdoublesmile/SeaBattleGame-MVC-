@@ -54,7 +54,7 @@ public class SeaBattleController {
 			if(e.getButton() == theView.getMOUSE_BUTTON_LEFT() && !theModel.isGameOver()) {
 //				System.out.println("клацаю левой кнопочкой!");
 				while(theModel.getPlayerShots().hitSamePlace(x, y)) {
-					theView.displayErrorMessage("Вы сюда уже стреляли. Есть смысл выстрелить в другое место..");
+					theView.displayMessage("Вы сюда уже стреляли. Есть смысл выстрелить в другое место..");
 					return;
 				}
 				theModel.getPlayerShots().add(x, y, true);
@@ -72,9 +72,17 @@ public class SeaBattleController {
 
 				
 				if(theModel.getOpponentShips().checkHit(x, y)) {
-
-
+					for(Ship ship : theModel.getOpponentShips().getBattleField()) {
+						if(!ship.isShipAlive() && ship.checkShipHit(x, y)){
+							for(Cell cell : ship.getAroundCells()) {
+								theModel.getPlayerShots().add(cell.getxCoord(), cell.getyCoord(), true);
+							}
+							theView.getOpponentBattleFieldPanel().repaint();
+							theView.displayMessage("Вы потопили вражеский корабль!");
+						}
+					}
 					if(!theModel.getOpponentShips().checkSurvivors()) {
+						theView.displayMessage("Вражеский флот уничтожен! Вы победили!");
 						theModel.setGameOver(true);
 					}
 					
@@ -129,7 +137,7 @@ public class SeaBattleController {
 		} else {
 			System.out.println("оппонент попал прямо в яблочко!!!");
 			if(!theModel.getPlayerShips().checkSurvivors()) {
-				System.out.println("это проигрыш...");
+				theView.displayMessage("Ваш флот уничтожен! Это поражение...");
 				theModel.setGameOver(true);
 			} else {
 				opponentShoots();

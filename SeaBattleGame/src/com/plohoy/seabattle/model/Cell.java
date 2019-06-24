@@ -1,6 +1,7 @@
 package com.plohoy.seabattle.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Cell {
 
@@ -33,6 +34,10 @@ public class Cell {
 		return cellLife;
 	}
 	
+	public void setCellLife(int i) {
+		this.cellLife = i;
+	}
+	
 	public boolean isCellNotDetached(ArrayList<Cell> cells, Cell ctrlCell) {		
 		for(Cell cell : cells) {			
 			for(int dx = -1; dx < 2; dx++) {				
@@ -56,5 +61,22 @@ public class Cell {
 	}
 	
 	public boolean isCellAlive() {	return cellLife != 0; }
+
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == this) { return true; }
+		if (obj == null || obj.getClass() != this.getClass()) { return false; }
+		Cell cell = (Cell) obj;
+		return cell.xCoord == this.xCoord &&
+				 cell.yCoord == this.yCoord;
+	}
 	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + xCoord;
+		result = prime * result + yCoord;
+		return result;
+	}	
 }

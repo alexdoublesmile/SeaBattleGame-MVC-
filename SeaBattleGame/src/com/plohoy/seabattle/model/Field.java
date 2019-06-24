@@ -47,7 +47,7 @@ public class Field {
 				int x = random.nextInt(fieldSize);
 				int y = random.nextInt(fieldSize);
 				int position = random.nextInt(2);
-				ship = new Ship(x, y, pattern[i], position);
+				ship = new Ship(x, y, pattern[i], position, fieldSize);
 //					System.out.println("проверка " + n + "." + z + " корабля на соответствие...");	
 //					z++;
 			} while(ship.isShipOutOfField(0, fieldSize - 1) || isShipNotDetached(ship));

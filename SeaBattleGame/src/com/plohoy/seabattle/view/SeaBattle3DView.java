@@ -182,10 +182,16 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 				g2.setColor(Color.green);
 				for(Ship ship : opponentShips.getBattleField()) {
 					for(Cell cell : ship.getCells()) {
-						if((!cell.isCellAlive())) {
+						if(!cell.isCellAlive()) {
 							g2.fill3DRect(cell.getxCoord()*cellSize + 1, cell.getyCoord()*cellSize + 1, cellSize - 2, cellSize - 2, true);
-						}
+						} 
 					}
+//					if(!ship.isShipAlive() && ship.isJustBeenHit()) {
+//						for(Cell cell : ship.getCells()) {
+//							g2.setColor(Color.gray);
+//							g2.fillRect(cell.getxCoord()*cellSize + cellSize/2 - 22, cell.getyCoord()*cellSize + cellSize/2 - 22, 44, 44);
+//						}
+//					}
 				}
 //				setHide(false);
 
@@ -326,7 +332,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 //	}
 //	
 	@Override
-	public void displayErrorMessage(String message) {
+	public void displayMessage(String message) {
 		
 		JOptionPane.showMessageDialog(this, message);
 	}

@@ -13,8 +13,10 @@ import com.plohoy.seabattle.model.Shots;
 
 public class SeaBattleConsoleView implements SeaBattleView{
 
+	public SeaBattleConsoleView() {
+		System.out.println("Консольный вид...");
 
-
+	}
 //	@Override
 //	public void displayErrorMessage(String message) {
 //		// TODO Auto-generated method stub
@@ -133,6 +135,18 @@ public class SeaBattleConsoleView implements SeaBattleView{
 
 	@Override
 	public void setAnswerChoice(int answer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setInvisible() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setVisible() {
 		// TODO Auto-generated method stub
 		
 	}

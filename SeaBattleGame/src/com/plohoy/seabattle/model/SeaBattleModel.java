@@ -9,7 +9,7 @@ public class SeaBattleModel {
 	Labels playerLabels;
 	Labels opponentLabels;
 	
-	private boolean gameOver = false;
+//	private boolean gameOver = false;
 	
 	public void createShips(int fieldSize) {
 		playerShips = new Field(fieldSize);
@@ -50,15 +50,15 @@ public class SeaBattleModel {
 		return opponentLabels;
 	}
 	
-	public boolean isGameOver() {
-		return gameOver;
-	}
-
-	public void setGameOver(boolean gameOver) {
-		this.gameOver = gameOver;
-	}
-	
-	public boolean getGameOver() {
-		return gameOver;
-	}
+//	public boolean isGameOver() {
+//		return gameOver;
+//	}
+//
+//	public void setGameOver(boolean gameOver) {
+//		this.gameOver = gameOver;
+//	}
+//	
+//	public boolean getGameOver() {
+//		return gameOver;
+//	}
 }

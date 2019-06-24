@@ -14,21 +14,31 @@ public class SeaBattleController {
 	
 	SeaBattleController(SeaBattleModel theModel, SeaBattleView theView) {
 		
-		newGame(theModel, theView);
+		
+			this.theModel = theModel;		
+			this.theView = theView;
+			theView.setVisible();
+
+			theModel.createShips(theView.getBattlefieldSize());
+			theModel.createShots();
+			theModel.createLabels();
+			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
+
+			theView.addShotListener(new shotListener());
+		
 	}
 	
-	public void newGame(SeaBattleModel theModel, SeaBattleView theView) {
-		
-		this.theModel = theModel;		
-		this.theView = theView;
-		theModel.setGameOver(false);
-		theModel.createShips(theView.getBattlefieldSize());
-		theModel.createShots();
-		theModel.createLabels();
-		theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
-
-		theView.addShotListener(new shotListener());
+	public void playAgain() {
+		theView.displayConfirmMessage(theView.getAGAIN_MESSAGE());
+		if(theView.getAnswerChoice() == 0) {
+			theView.setInvisible();
+			new Launcher().exec();
+		} else {
+			System.exit(0);
+		}
 	}
+		
+		
 	
 	class shotListener extends MouseAdapter {
 
@@ -56,7 +66,7 @@ public class SeaBattleController {
 //			System.out.println("размер ячейки: " + theView.getCELL_PLAYER_PX_SIZE());	
 //			System.out.println("мои координаты y: (" + e.getX() + ", " + e.getY() + ")");
 //			System.out.println("------------------------------------------------");
-			if(e.getButton() == theView.checkIsItShot() && !theModel.isGameOver()) {
+			if(e.getButton() == theView.checkIsItShot()) {
 //				System.out.println("клацаю левой кнопочкой!");
 				while(theModel.getPlayerShots().shotSamePlace(x, y)) {
 					theView.displayMessage("Вы сюда уже стреляли. Есть смысл выстрелить в другое место..");
@@ -85,15 +95,7 @@ public class SeaBattleController {
 							theView.getOpponentBattleFieldPanel().repaint();
 							if(!theModel.getOpponentShips().checkAnyShipAlive()) {
 								theView.displayMessage(theView.getWINNER_MESSAGE());
-								theModel.setGameOver(true);
-//								if(theModel.getGameOver()) {
-//									theView.displayConfirmMessage(theView.getAGAIN_MESSAGE());
-//									if(theView.getAnswerChoice() == 0) {
-//										newGame(theModel, theView);
-//									} else {
-//										System.exit(0);
-//									}
-//								}
+								playAgain();
 							} else {
 								theView.displayMessage("Вы потопили вражеский корабль!");
 							}
@@ -153,7 +155,7 @@ public class SeaBattleController {
 			System.out.println("оппонент попал прямо в яблочко!!!");
 			if(!theModel.getPlayerShips().checkAnyShipAlive()) {
 				theView.displayMessage("Ваш флот уничтожен! Это поражение...");
-				theModel.setGameOver(true);
+				playAgain();
 			} else {
 				opponentShoots();
 			}

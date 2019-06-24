@@ -52,6 +52,10 @@ public interface SeaBattleView {
 	int getAnswerChoice();
 
 	void setAnswerChoice(int answer);
+
+	void setInvisible();
+
+	void setVisible();
 }
 
 //void showBattleField(Object obj);

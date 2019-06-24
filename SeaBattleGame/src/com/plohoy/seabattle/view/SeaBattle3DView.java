@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import javax.swing.*;
 import com.plohoy.seabattle.model.*;
 
@@ -227,9 +226,18 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	@Override
 	public void displayConfirmMessage(String message) {
 		
-		answerChoice = JOptionPane.showConfirmDialog(this, message, "Можем повторить бой", 2);
+		answerChoice = JOptionPane.showConfirmDialog(this, message, "", 2);
 	}
 
+	@Override
+	public void setVisible() {
+		setVisible(true);
+	}
+	
+	@Override
+	public void setInvisible() {
+		setVisible(false);
+	}
 	
 //	@Override
 //	public Graphics2D getFieldView() {

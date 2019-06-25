@@ -8,7 +8,6 @@ public class Cell {
 	private int cellLife = 1;
 	
 	Cell (int x, int y) {
-//		System.out.println("Координаты ячейки: " + x + ", " + y);
 		this.xCoord = x;
 		this.yCoord = y;
 	}

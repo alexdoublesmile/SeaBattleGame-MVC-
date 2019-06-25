@@ -6,48 +6,22 @@ public class Ship {
 
 	private ArrayList<Cell> cells = new ArrayList<Cell>();
 	private ArrayList<Cell> aroundCells = new ArrayList<Cell>();
-
-	private HashSet<Cell> killAroundCellsDuplicate;
-	
-	
-//	public void createAroundCells() {
-//		for(Cell cell : cells) {
-//			for(int xCell = -1; xCell < 2; xCell++) {
-//				for(int yCell = -1; yCell < 2; yCell++) {
-//					if(!(cell.getXCoord() == xCell && cell.getYCoord() == yCell))
-//					aroundCells.add(new Cell(xCell, yCell));
-//				}
-//			}
-//		}
-//	}
-	
-	
-//	private boolean justBeenHit = false;
-//	
-//	public boolean isJustBeenHit() {
-//		return justBeenHit;
-//	}
-//
-//	public void setJustBeenHit(boolean justBeenHit) {
-//		this.justBeenHit = justBeenHit;
-//	}
+	private HashSet<Cell> removeDuplicateCellsFromTerritory;
 
 	Ship(int x, int y, int lenght, int position, int fieldSize) {
-//		System.out.println("------------------------------------------------");	
-//		System.out.println("начальные координаты корабля: " + x + ", " + y);
-//		System.out.println("размер корабля: " + lenght);
-//		if(position == 1) {
-//			System.out.println("корабль расположен вертикально");
-//		} else {
-//			System.out.println("корабль расположен горизонтально");
-//		}
-//		
-//		System.out.println("------------------------------------------------");
+
+		shipCreation(x, y, lenght, position);
+		shipTerritoryCreation(fieldSize);	
+	}
+	
+	public void shipCreation(int x, int y, int lenght, int position) {
 		for(int i = 0; i < lenght; i++) {
 			cells.add(new Cell(x + i*((position == 1)? 0 : 1),
 							   y + i*((position == 1)? 1 : 0)));
-		}		
-
+		}
+	}
+	
+	public void shipTerritoryCreation(int fieldSize) {
 		for(Cell cell : cells) {
 			for(int xCell = -1; xCell < 2; xCell++) {
 				for(int yCell = -1; yCell < 2; yCell++) {
@@ -60,7 +34,11 @@ public class Ship {
 				}
 			}
 		}
-		
+		removeShipCellsFromTerritory();
+		removeDuplicateCellsFromTerritory();
+	}
+	
+	public void removeShipCellsFromTerritory() {
 		for(Cell cell : cells) {
 			for(int i = 0; i < aroundCells.size(); i++) {
 				if((cell.getXCoord() == aroundCells.get(i).getXCoord() &&
@@ -69,38 +47,14 @@ public class Ship {
 				}
 			}
 		}
-		
-		killAroundCellsDuplicate = new HashSet<Cell>(aroundCells);
-		aroundCells.clear();
-		aroundCells.addAll(killAroundCellsDuplicate);
-		
-//		System.out.println("------------------------------------------------");	
-//		System.out.println("Проверка Корабля");
-//		int n = 1;
-//		for(Cell cell : cells) {
-//			System.out.println("Корабль: координаты ячейки № " + n + ": " + cell.getXCoord() + ", " + cell.getYCoord());
-//			n++;
-//		}
-//		System.out.println("------------------------------------------------");	
-//		
-//		System.out.println("------------------------------------------------");	
-//		System.out.println("Проверка окружения Корабля");
-//		int q = 1;
-//		for(Cell cell : aroundCells) {
-//			System.out.println("Координаты ячейки № " + q + ": " + cell.getXCoord() + ", " + cell.getYCoord());
-//			q++;
-//		}
-//		System.out.println("------------------------------------------------");
 	}
 	
-	public ArrayList<Cell> getCells() {
-		return cells;
+	public void removeDuplicateCellsFromTerritory() {
+		removeDuplicateCellsFromTerritory = new HashSet<Cell>(aroundCells);
+		aroundCells.clear();
+		aroundCells.addAll(removeDuplicateCellsFromTerritory);
 	}
-
-	public ArrayList<Cell> getAroundCells() {
-		return aroundCells;
-	}
-
+	
 	public boolean isShipOutOfField(int bottom, int top) {
 		for(Cell cell : cells) {
 			if(cell.getXCoord() < bottom || cell.getXCoord() > top ||
@@ -136,5 +90,13 @@ public class Ship {
 			}
 		}
 		return false;
+	}
+	
+	public ArrayList<Cell> getCells() {
+		return cells;
+	}
+
+	public ArrayList<Cell> getAroundCells() {
+		return aroundCells;
 	}
 }

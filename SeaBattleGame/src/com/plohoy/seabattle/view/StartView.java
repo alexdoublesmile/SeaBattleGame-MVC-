@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 public class StartView extends JFrame {
 
 	private int viewChoice;
-	private String CONFIRM_VIEW = "Будете играть в 3D ?";
+	private String CONFIRM_VIEW = "Будете играть в 3D версию?";
 
 	public StartView() {
 		

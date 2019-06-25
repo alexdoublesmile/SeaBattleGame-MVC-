@@ -55,31 +55,6 @@ public class SeaBattleConsoleView implements SeaBattleView{
 	}
 
 	@Override
-	public int getFIELD_PLAYER_PX_SIZE() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getFIELD_OPP_PX_SIZE() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getCELL_PLAYER_PX_SIZE() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public int getCELL_OPP_PX_SIZE() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-
-	@Override
 	public void displayMessage(String message) {
 		// TODO Auto-generated method stub
 		
@@ -128,18 +103,6 @@ public class SeaBattleConsoleView implements SeaBattleView{
 	}
 
 	@Override
-	public int getAnswerChoice() {
-		// TODO Auto-generated method stub
-		return (Integer) null;
-	}
-
-	@Override
-	public void setAnswerChoice(int answer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public void setInvisible() {
 		// TODO Auto-generated method stub
 		
@@ -147,6 +110,30 @@ public class SeaBattleConsoleView implements SeaBattleView{
 
 	@Override
 	public void setVisible() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getCELL_PX_SIZE() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getFIELD_PX_SIZE() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getPlayAgainAnswer() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void setPlayAgainAnswer(int answer) {
 		// TODO Auto-generated method stub
 		
 	}

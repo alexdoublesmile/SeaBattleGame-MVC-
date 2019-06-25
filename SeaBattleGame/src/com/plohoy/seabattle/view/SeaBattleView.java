@@ -1,53 +1,45 @@
 package com.plohoy.seabattle.view;
 
 import com.plohoy.seabattle.model.*;
-import java.awt.event.MouseListener;
-
-import javax.swing.JPanel;
 
 public interface SeaBattleView {
-
-	void addShotListener(MouseListener shotListener);
-
-	int getBattlefieldSize();
 
 	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
 			Labels opponentLabels);
 
-	JPanel getPlayerBattleFieldPanel();
+	void repaintPlayerView();
 
-	JPanel getOpponentBattleFieldPanel();
-
-	void displayMessage(String message);
-
-
-	int checkIsItLabel();
-
-
-	int checkIsItShot();
-
-
-	String getLOOSER_MESSAGE();
-
-
-	String getWINNER_MESSAGE();
-
-
+	void repaintOpponentView();
+		
 	void setBattlefieldSize(int battlefieldSize);
 
-	void displayConfirmMessage(String message);
-
-	String getAGAIN_MESSAGE();
-
-	void setInvisible();
-
-	void setVisible();
+	int getBattlefieldSize();
 
 	int getCELL_PX_SIZE();
 
 	int getFIELD_PX_SIZE();
 
+	int checkIsItShot();
+
+	int checkIsItLabel();
+
 	int getPlayAgainAnswer();
 
-	void setPlayAgainAnswer(int answer);
+	void displayMessage(String message);
+
+	void displayConfirmMessage(String message);
+
+	String getAGAIN_MESSAGE();
+
+	String getREPEAT_SHOT_MESSAGE();
+
+	String getSINK_THE_SHIP_MESSAGE();
+
+	String getLOOSER_MESSAGE();
+
+	String getWINNER_MESSAGE();
+
+	void setInvisible();
+
+	void setVisible();
 }

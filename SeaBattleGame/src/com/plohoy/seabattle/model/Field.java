@@ -8,10 +8,6 @@ public class Field {
 	private int[] templateOfBattleField = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 	private Random random;
 
-	public void setPattern(int[] pattern) {
-		this.templateOfBattleField = pattern;
-	}
-
 	Field(int fieldSize) {	
 		random = new Random();
 		for(int i = 0; i < templateOfBattleField.length; i++) {
@@ -24,10 +20,6 @@ public class Field {
 			} while(ship.isShipOutOfField(0, fieldSize - 1) || isShipNotDetached(ship));
 			battleField.add(ship);
 		}
-	}
-
-	public ArrayList<Ship> getBattleField() {
-		return battleField;
 	}
 
 	public boolean isShipNotDetached(Ship ctrlShip) {
@@ -55,5 +47,13 @@ public class Field {
 			}
 		}
 		return false;
+	}
+
+	public ArrayList<Ship> getBattleField() {
+		return battleField;
+	}
+
+	public void setPattern(int[] pattern) {
+		this.templateOfBattleField = pattern;
 	}
 }

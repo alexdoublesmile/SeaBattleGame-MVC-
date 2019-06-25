@@ -1,17 +1,17 @@
 package com.plohoy.seabattle.view;
 
+import com.plohoy.seabattle.model.*;
+
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import javax.swing.*;
-import com.plohoy.seabattle.model.*;
 
 @SuppressWarnings("serial")
 public class SeaBattle3DView extends JFrame implements SeaBattleView {
 
 	private int battlefieldSize = 10;
-	private final int FIELD_PX_SIZE = 400;
+	private final int FIELD_PX_SIZE = 250;
 	private final int CELL_PX_SIZE = FIELD_PX_SIZE / battlefieldSize;
 	private final int SHADOW_OFFSET_FACTOR = CELL_PX_SIZE / 30;
 	private final float LINE_FACTOR = CELL_PX_SIZE / 28f;
@@ -23,9 +23,11 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	private final int MOUSE_BUTTON_RIGHT = 3;
 
 	private final String TITLE = "Морской Бой cо слабым ИИ на простейшем поле (расстановка кораблей автоматическая)";
-	private final String WINNER_MESSAGE = "Вражеский флот уничтожен! Вы победили!";
+	private final String WINNER_MESSAGE = "Поздравляем! Вражеский флот уничтожен! Вы победили!!!";
 	private final String LOOSER_MESSAGE = "Ваш флот уничтожен! Это поражение...";
 	private final String AGAIN_MESSAGE = "Желаете сыграть снова?";
+	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
+	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
 	private int playAgainAnswer;
 
 	BattleFieldPlayerPanel playerBattleFieldPanel;
@@ -49,6 +51,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		this.setLocationRelativeTo(null);
 
 	}
+	
 	@Override
 	public void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots, Labels opponentLabels) {
 		playerShips = playerField;
@@ -72,19 +75,19 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		playerBattleFieldPanel = new BattleFieldPlayerPanel();
 		playerBattleFieldPanel.setPreferredSize(new Dimension(FIELD_PX_SIZE, FIELD_PX_SIZE));
 		playerBattleFieldPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
-		playerBattleFieldPanel.setBackground(Color.blue);
+		playerBattleFieldPanel.setBackground(Color.white);
 	}
 
 	public void createOpponentPanel() {
 		opponentBattleFieldPanel = new BattleFieldOpponentPanel();
 		opponentBattleFieldPanel.setPreferredSize(new Dimension(FIELD_PX_SIZE, FIELD_PX_SIZE));
 		opponentBattleFieldPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
-		opponentBattleFieldPanel.setBackground(Color.blue);
+		opponentBattleFieldPanel.setBackground(Color.white);
 	}
 	
 	public void createMiddlePanel() {
 		middlePanel = new JPanel();
-		middlePanel.setBackground(Color.blue);
+		middlePanel.setBackground(Color.white);
 	}
 	
 	class BattleFieldPlayerPanel extends JPanel {
@@ -126,27 +129,36 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	
 	public void drawShots(Graphics2D g2, Shots shots) {			
 		for(Shot shot : shots.getShots()) {
-			g2.setColor(Color.gray);
-			fillTheCell(shot, g2);
+			g2.setColor(Color.darkGray);
+//			fillTheCell(shot, g2);
+			drawTheShot(shot, g2);
 		}
 	}
 	
 	public void drawShips(Graphics2D g2, Field ships, boolean isVisible) {			
 		for(Ship ship : ships.getBattleField()) {
-			for(Cell cell : ship.getCells()) {
-				g2.setColor(Color.green);
-				if(isVisible) {
-					fillTheCell(cell, g2);
+			if(ship.isShipAlive()) {
+				for(Cell cell : ship.getCells()) {
+					g2.setColor(Color.green);
+					if(isVisible) {
+						drawTheCell(cell, g2);
+					}
+					if(!cell.isCellAlive()) {
+						drawTheCell(cell, g2);
+						drawTheCross(cell, g2, Color.red);
+					} 
 				}
-				if(!cell.isCellAlive()) {
-					fillTheCell(cell, g2);
-					drawTheRedCross(cell, g2);
-				} 
-			}
+			} else {
+				for(Cell cell : ship.getCells()) {
+					g2.setColor(Color.gray);
+					drawTheCell(cell, g2);
+					drawTheCross(cell, g2, Color.darkGray);
+				}				
+			}			
 		}
 	}
 	
-	public void fillTheCell(Object obj, Graphics2D g2) {		
+	public void drawTheCell(Object obj, Graphics2D g2) {		
 		if(obj instanceof Shot) {
 			Shot shot = (Shot) obj;
 			g2.fill3DRect(
@@ -166,7 +178,16 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		}
 	}
 	
-	public void drawTheRedCross(Cell cell, Graphics2D g2) {
+	public void drawTheShot(Shot shot, Graphics2D g2) {		
+		g2.fill3DRect(
+				shot.getXCoord()*CELL_PX_SIZE + CELL_PX_SIZE / 2 - 3 * SHADOW_OFFSET_FACTOR, 
+				shot.getYCoord()*CELL_PX_SIZE + CELL_PX_SIZE / 2 - 3 * SHADOW_OFFSET_FACTOR, 
+				CELL_PX_SIZE/6 - 2 * SHADOW_OFFSET_FACTOR, 
+				CELL_PX_SIZE/6 - 2 * SHADOW_OFFSET_FACTOR, 
+				true);
+	}
+	
+	public void drawTheCross(Cell cell, Graphics2D g2, Color color) {
 		Line2D topLine = new Line2D.Double(
 				cell.getXCoord()*CELL_PX_SIZE + LINE_OFFSET_FACTOR, 
 				cell.getYCoord()*CELL_PX_SIZE + LINE_OFFSET_FACTOR, 
@@ -191,10 +212,20 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		g2.setStroke(new BasicStroke(LINE_FACTOR / 2));
 		g2.draw(topShadowLine);
 		g2.draw(bottomShadowLine);
-		g2.setColor(Color.red);
+		g2.setColor(color);
 		g2.setStroke(new BasicStroke(LINE_FACTOR));
 		g2.draw(topLine);
 		g2.draw(bottomLine);
+	}
+	
+	@Override
+	public void repaintPlayerView() {	
+		playerBattleFieldPanel.repaint();
+	}
+	
+	@Override
+	public void repaintOpponentView() {	
+		opponentBattleFieldPanel.repaint();
 	}
 	
 	public void addShotListener(MouseListener listenForShot) {	
@@ -255,25 +286,20 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	public String getAGAIN_MESSAGE() {
 		return AGAIN_MESSAGE;
 	}
-	
-	@Override
-	public JPanel getPlayerBattleFieldPanel() {
-		return playerBattleFieldPanel;
-	}
 
 	@Override
-	public JPanel getOpponentBattleFieldPanel() {
-		return opponentBattleFieldPanel;
+	public String getREPEAT_SHOT_MESSAGE() {
+		return REPEAT_SHOT_MESSAGE;
+	}
+	
+	@Override
+	public String getSINK_THE_SHIP_MESSAGE() {
+		return SINK_THE_SHIP_MESSAGE;
 	}
 	
 	@Override
 	public int getPlayAgainAnswer() {
 		return playAgainAnswer;
-	}
-
-	@Override
-	public void setPlayAgainAnswer(int answer) {
-		this.playAgainAnswer = answer;
 	}
 	
 	@Override

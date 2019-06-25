@@ -10,18 +10,18 @@ public class Ship {
 
 	Ship(int x, int y, int lenght, int position, int fieldSize) {
 
-		shipCreation(x, y, lenght, position);
-		shipTerritoryCreation(fieldSize);	
+		createShip(x, y, lenght, position);
+		createShipTerritory(fieldSize);	
 	}
 	
-	public void shipCreation(int x, int y, int lenght, int position) {
+	public void createShip(int x, int y, int lenght, int position) {
 		for(int i = 0; i < lenght; i++) {
 			cells.add(new Cell(x + i*((position == 1)? 0 : 1),
 							   y + i*((position == 1)? 1 : 0)));
 		}
 	}
 	
-	public void shipTerritoryCreation(int fieldSize) {
+	public void createShipTerritory(int fieldSize) {
 		for(Cell cell : cells) {
 			for(int xCell = -1; xCell < 2; xCell++) {
 				for(int yCell = -1; yCell < 2; yCell++) {

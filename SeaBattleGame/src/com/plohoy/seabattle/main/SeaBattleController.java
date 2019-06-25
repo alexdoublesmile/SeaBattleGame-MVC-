@@ -8,12 +8,12 @@ import com.plohoy.seabattle.model.*;
 import com.plohoy.seabattle.view.*;
 
 public class SeaBattleController {
+	
 	SeaBattleModel theModel;	
 	SeaBattleView theView;
 	
 	SeaBattleController(SeaBattleModel theModel, SeaBattleView theView) {
-		
-		
+				
 			this.theModel = theModel;		
 			this.theView = theView;
 
@@ -22,21 +22,23 @@ public class SeaBattleController {
 			theModel.createLabels();
 			theView.setVisible();
 			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
-
-			theView.addShotListener(new shotListener());
-		
+			if(this.theView instanceof SeaBattle3DView) {
+				((SeaBattle3DView) theView).addShotListener(new shotListener());
+			} else {
+				System.out.println("Будем консолить)...");
+			}
 	}
 		
 	class shotListener extends MouseAdapter {
 
 		@Override
-		public void mouseReleased(MouseEvent e) {
-			super.mouseReleased(e);
+		public void mousePressed(MouseEvent e) {
+			super.mousePressed(e);
 			int x = e.getX()/(theView.getCELL_PX_SIZE());
 			int	y = e.getY()/(theView.getCELL_PX_SIZE());
 			if(e.getButton() == theView.checkIsItShot()) {
 				while(theModel.getPlayerShots().shotSamePlace(x, y)) {
-					theView.displayMessage("Вы сюда уже стреляли. Есть смысл выстрелить в другое место..");
+					theView.displayMessage(theView.getREPEAT_SHOT_MESSAGE());
 					return;
 				}
 				theModel.getPlayerShots().add(x, y, true);
@@ -46,24 +48,24 @@ public class SeaBattleController {
 							for(Cell cell : ship.getAroundCells()) {
 								theModel.getPlayerShots().add(cell.getXCoord(), cell.getYCoord(), true);
 							}
-							theView.getOpponentBattleFieldPanel().repaint();
+							theView.repaintOpponentView();
 							if(!theModel.getOpponentShips().checkAnyShipAlive()) {
 								theView.displayMessage(theView.getWINNER_MESSAGE());
 								playAgain();
 							} else {
-								theView.displayMessage("Вы потопили вражеский корабль!");
+//								theView.displayMessage(theView.getSINK_THE_SHIP_MESSAGE());
 							}
 						}
 					}				
 				} else {
 					opponentShoots();
-					theView.getOpponentBattleFieldPanel().repaint();
-					theView.getPlayerBattleFieldPanel().repaint();
+					theView.repaintOpponentView();
+					theView.repaintPlayerView();
 				}
-				theView.getOpponentBattleFieldPanel().repaint();
+				theView.repaintOpponentView();
 			}
 			if(e.getButton() == theView.checkIsItLabel()) {
-				System.out.println("клацаю правой кнопочкой!");
+				System.out.println("click mouse right-button");
 			}
 		}		
 	}
@@ -77,12 +79,10 @@ public class SeaBattleController {
 		} while(theModel.getOpponentShots().shotSamePlace(x, y));
 		theModel.getOpponentShots().add(x, y, true);
 		if (!theModel.getPlayerShips().checkHit(x, y)) {
-			System.out.println("оппонент промазал!!!");
 			return;
 		} else {
-			System.out.println("оппонент попал прямо в яблочко!!!");
 			if(!theModel.getPlayerShips().checkAnyShipAlive()) {
-				theView.displayMessage("Ваш флот уничтожен! Это поражение...");
+				theView.displayMessage(theView.getLOOSER_MESSAGE());
 				playAgain();
 			} else {
 				opponentShoots();

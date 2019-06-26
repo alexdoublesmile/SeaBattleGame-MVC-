@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 public class StartView extends JFrame {
 
 	private int viewChoice;
-	private String CONFIRM_VIEW = "Будете играть в 3D версию?";
+	private String CONFIRM_VIEW = "В какую версию желаете сыграть?";
 
 	public StartView() {
 		
@@ -19,7 +19,12 @@ public class StartView extends JFrame {
 	}
 
 	public int displayConfirmMessage(String message) {
-		
-		return JOptionPane.showConfirmDialog(this, message, "", 2);
+		Object[] views = {"3D Version",
+                "Console version"};
+		return JOptionPane.showOptionDialog(
+				this, message, "Выбор режима", JOptionPane.YES_NO_OPTION,
+			    JOptionPane.QUESTION_MESSAGE, null, views, views[1]);
 	}
+	
+	
 }

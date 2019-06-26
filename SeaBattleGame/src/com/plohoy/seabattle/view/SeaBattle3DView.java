@@ -3,6 +3,8 @@ package com.plohoy.seabattle.view;
 import com.plohoy.seabattle.model.*;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Line2D;
 import javax.swing.*;
@@ -11,7 +13,11 @@ import javax.swing.*;
 public class SeaBattle3DView extends JFrame implements SeaBattleView {
 
 	private int battlefieldSize = 10;
-	private final int FIELD_PX_SIZE = 250;
+	private int xShotCoord;
+	private int yShotCoord;
+	private int pressedButton;
+
+	private final int FIELD_PX_SIZE = 350;
 	private final int CELL_PX_SIZE = FIELD_PX_SIZE / battlefieldSize;
 	private final int SHADOW_OFFSET_FACTOR = CELL_PX_SIZE / 30;
 	private final float LINE_FACTOR = CELL_PX_SIZE / 28f;
@@ -68,7 +74,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		this.add(playerBattleFieldPanel);
 		this.add(middlePanel);
 		this.add(opponentBattleFieldPanel);
-		this.pack();				
+		this.pack();
 	}
 	
 	public void createPlayerPanel() {
@@ -83,6 +89,9 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		opponentBattleFieldPanel.setPreferredSize(new Dimension(FIELD_PX_SIZE, FIELD_PX_SIZE));
 		opponentBattleFieldPanel.setBorder(BorderFactory.createLineBorder(Color.lightGray, 1));
 		opponentBattleFieldPanel.setBackground(Color.white);
+		opponentBattleFieldPanel.addMouseListener(new MouseAdapter() {
+			
+		});
 	}
 	
 	public void createMiddlePanel() {
@@ -103,7 +112,9 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	}
 			
 	class BattleFieldOpponentPanel extends JPanel {
+		
 		@Override
+		
 		public void paint(Graphics g) {
 			super.paint(g);
 			Graphics2D g2 = (Graphics2D) g;
@@ -139,7 +150,7 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		for(Ship ship : ships.getBattleField()) {
 			if(ship.isShipAlive()) {
 				for(Cell cell : ship.getCells()) {
-					g2.setColor(Color.green);
+					g2.setColor(Color.lightGray);
 					if(isVisible) {
 						drawTheCell(cell, g2);
 					}
@@ -158,24 +169,24 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		}
 	}
 	
-	public void drawTheCell(Object obj, Graphics2D g2) {		
-		if(obj instanceof Shot) {
-			Shot shot = (Shot) obj;
-			g2.fill3DRect(
-					shot.getXCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
-					shot.getYCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
-					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
-					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
-					true);
-		} else {
-			Cell cell = (Cell) obj;
+	public void drawTheCell(Cell cell, Graphics2D g2) {		
+//		if(obj instanceof Shot) {
+//			Shot shot = (Shot) obj;
+//			g2.fill3DRect(
+//					shot.getXCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
+//					shot.getYCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
+//					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
+//					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
+//					true);
+//		} else {
+//			Cell cell = (Cell) obj;
 			g2.fill3DRect(
 					cell.getXCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
 					cell.getYCoord()*CELL_PX_SIZE + SHADOW_OFFSET_FACTOR, 
 					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
 					CELL_PX_SIZE - 2 * SHADOW_OFFSET_FACTOR, 
 					true);
-		}
+//		}
 	}
 	
 	public void drawTheShot(Shot shot, Graphics2D g2) {		
@@ -218,12 +229,10 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		g2.draw(bottomLine);
 	}
 	
-	@Override
 	public void repaintPlayerView() {	
 		playerBattleFieldPanel.repaint();
 	}
 	
-	@Override
 	public void repaintOpponentView() {	
 		opponentBattleFieldPanel.repaint();
 	}
@@ -231,6 +240,21 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	public void addShotListener(MouseListener listenForShot) {	
 		opponentBattleFieldPanel.addMouseListener(listenForShot);
 	}
+	
+//	public void addShotListener() {	
+//		opponentBattleFieldPanel.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mousePressed(MouseEvent e) {
+//				super.mousePressed(e);
+//				xShotCoord = e.getX()/(CELL_PX_SIZE);
+//				yShotCoord = e.getY()/(CELL_PX_SIZE);
+//				pressedButton = e.getButton();
+//				System.out.println("-------------------------");
+//				System.out.println("x: " + xShotCoord + ", y: " + yShotCoord);
+//				System.out.println("-------------------------");
+//			}
+//		});
+//	}
 	
 	@Override
 	public void displayMessage(String message) {
@@ -242,14 +266,40 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		playAgainAnswer = JOptionPane.showConfirmDialog(this, message, "", 2);
 	}
 
-	@Override
+//	
+//	public boolean checkIsItShot() {
+//		if(pressedButton == MOUSE_BUTTON_LEFT) {
+//			return true;
+//		}
+//		return false;
+//	}
+//
+//	
+//	public boolean checkIsItLabel() {
+//		if(pressedButton == MOUSE_BUTTON_RIGHT) {
+//			return true;
+//		}
+//		return false;	
+//	}
+	
+
+
+	
+	public void setXShotCoord(int xShotCoord) {
+		this.xShotCoord = xShotCoord;
+	}
+	
+	
+	public void setYShotCoord(int yShotCoord) {
+		this.yShotCoord = yShotCoord;
+	}
+	
 	public int checkIsItShot() {
 		return MOUSE_BUTTON_LEFT;
 	}
 
-	@Override
 	public int checkIsItLabel() {
-		return MOUSE_BUTTON_RIGHT;
+		return MOUSE_BUTTON_RIGHT;	
 	}
 	
 	@Override
@@ -262,12 +312,6 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 		this.battlefieldSize = battlefieldSize;
 	}
 
-	@Override
-	public int getFIELD_PX_SIZE() {
-		return FIELD_PX_SIZE;
-	}
-
-	@Override
 	public int getCELL_PX_SIZE() {
 		return CELL_PX_SIZE;
 	}
@@ -303,11 +347,25 @@ public class SeaBattle3DView extends JFrame implements SeaBattleView {
 	}
 	
 	@Override
+	public int getXShotCoord() {
+		return xShotCoord;
+	}
+
+	@Override
+	public int getYShotCoord() {
+		return yShotCoord;
+	}
+	
+	public int getPressedButton() {
+		return pressedButton;
+	}
+	
+	
 	public void setVisible() {
 		setVisible(true);
 	}
 	
-	@Override
+	
 	public void setInvisible() {
 		setVisible(false);
 	}

@@ -8,13 +8,21 @@ public class StartModel {
 
 
 	public SeaBattleView viewModeChoose(int viewChoice) {
-		SeaBattleView newView;
+		SeaBattleView newView = null;
 
-		 
-		if(viewChoice == 0) {
+		switch(viewChoice) {
+		case(0):
 			newView = new SeaBattle3DView();
-		} else {
+			break;
+		case(1):
 			newView = new SeaBattleConsoleView();
+			break;
+		case(2):
+			newView = new SeaBattleConsoleView();
+			System.exit(0);
+			break;
+		default:
+			break;
 		}
 		return newView;
 	}

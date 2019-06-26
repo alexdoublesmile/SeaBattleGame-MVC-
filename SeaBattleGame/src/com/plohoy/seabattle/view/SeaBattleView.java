@@ -6,22 +6,10 @@ public interface SeaBattleView {
 
 	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
 			Labels opponentLabels);
-
-	void repaintPlayerView();
-
-	void repaintOpponentView();
 		
 	void setBattlefieldSize(int battlefieldSize);
 
 	int getBattlefieldSize();
-
-	int getCELL_PX_SIZE();
-
-	int getFIELD_PX_SIZE();
-
-	int checkIsItShot();
-
-	int checkIsItLabel();
 
 	int getPlayAgainAnswer();
 
@@ -39,7 +27,7 @@ public interface SeaBattleView {
 
 	String getWINNER_MESSAGE();
 
-	void setInvisible();
+	int getYShotCoord();
 
-	void setVisible();
+	int getXShotCoord();
 }

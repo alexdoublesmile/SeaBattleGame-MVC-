@@ -11,9 +11,13 @@ private ArrayList<Label> labels;
 		labels = new ArrayList<Label>();
 	}
 	
+	public ArrayList<Label> getLabels() {
+		return labels;
+	}
+	
 	Label getLabel(int x, int y) {
 		for(Label label : labels) {
-			if(label.getxCoord() == x && label.getyCoord() == y && (!label.isLabel())) {
+			if(label.getXCoord() == x && label.getYCoord() == y && (!label.isLabel())) {
 				return label;
 			}
 		}
@@ -23,4 +27,6 @@ private ArrayList<Label> labels;
 	void removeLabel(Label label) {
 		labels.remove(label);
 	}
+	
+	
 }

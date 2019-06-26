@@ -1,15 +1,17 @@
 package com.plohoy.seabattle.model;
 
+import com.plohoy.seabattle.ai.AIMakeShot;
+
 public class SeaBattleModel {
-	
-	Field playerShips;
-	Field opponentShips;
-	Shots playerShots;
-	Shots opponentShots;
-	Labels playerLabels;
-	Labels opponentLabels;
-	
-	
+
+	private AIMakeShot aIShoots;
+	private Field playerShips;
+	private Field opponentShips;
+	private Shots playerShots;
+	private Shots opponentShots;
+	private Labels playerLabels;
+	private Labels opponentLabels;
+
 	public void createShips(int fieldSize) {
 		playerShips = new Field(fieldSize);
 		opponentShips = new Field(fieldSize);
@@ -23,6 +25,9 @@ public class SeaBattleModel {
 	public void createLabels() {
 		playerLabels = new Labels();
 		opponentLabels = new Labels();
+	}
+	public void createAI() {
+		aIShoots = new AIMakeShot();
 	}
 	
 	public Field getPlayerShips() {
@@ -47,5 +52,9 @@ public class SeaBattleModel {
 	
 	public Labels getOpponentLabels() {
 		return opponentLabels;
+	}
+
+	public AIMakeShot getAIShoots() {
+		return aIShoots;
 	}
 }

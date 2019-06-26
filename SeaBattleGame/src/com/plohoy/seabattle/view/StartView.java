@@ -7,7 +7,7 @@ import javax.swing.JOptionPane;
 public class StartView extends JFrame {
 
 	private int viewChoice;
-	private String CONFIRM_VIEW = "В какой тип Морского Боя хотите сыграть?";
+	private String CONFIRM_VIEW = "В какой тип Морского Боя желаете сыграть?";
 
 	public StartView() {	
 		viewChoice = displayConfirmMessage(CONFIRM_VIEW);

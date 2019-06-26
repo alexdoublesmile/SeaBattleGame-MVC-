@@ -15,7 +15,7 @@ public class Game3DView extends JFrame implements GameView {
 	private int xShotCoord;
 	private int yShotCoord;
 
-	private final int FIELD_PX_SIZE = 350;
+	private final int FIELD_PX_SIZE = 300;
 	private final int CELL_PX_SIZE = FIELD_PX_SIZE / battlefieldSize;
 	private final int SHADOW_OFFSET_FACTOR = CELL_PX_SIZE / 30;
 	private final float LINE_FACTOR = CELL_PX_SIZE / 28f;
@@ -29,7 +29,7 @@ public class Game3DView extends JFrame implements GameView {
 	private final String TITLE = "Морской Бой cо слабым ИИ на простейшем поле (расстановка кораблей автоматическая)";
 	private final String WINNER_MESSAGE = "Поздравляем! Вражеский флот уничтожен! Вы победили!!!";
 	private final String LOOSER_MESSAGE = "Ваш флот уничтожен! Это поражение...";
-	private final String AGAIN_MESSAGE = "Желаете сыграть снова?";
+	private final String AGAIN_MESSAGE = "Может быть желаете сыграть еще разок?";
 	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
 	private int playAgainAnswer;
@@ -226,12 +226,18 @@ public class Game3DView extends JFrame implements GameView {
 	
 	@Override
 	public void displayMessage(String message) {
-		JOptionPane.showMessageDialog(this, message);
+		String[] answers = {"Okay.."};
+		JOptionPane.showOptionDialog(
+				this, message, "", JOptionPane.YES_OPTION, 
+				JOptionPane.PLAIN_MESSAGE, null, answers, answers[0]);
 	}
 
 	@Override
-	public void displayConfirmMessage(String message) {		
-		playAgainAnswer = JOptionPane.showConfirmDialog(this, message, "", 2);
+	public void displayConfirmMessage(String message) {	
+		String[] answers = {"Разве что разок", "Хватит пока.."};
+		playAgainAnswer = JOptionPane.showOptionDialog(
+				this, message, "", JOptionPane.YES_NO_OPTION, 
+				JOptionPane.PLAIN_MESSAGE, null, answers, answers[1]);
 	}
 	
 	@Override

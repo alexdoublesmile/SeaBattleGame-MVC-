@@ -11,14 +11,9 @@ public class AIMakeShot {
 	public int getXShotCoord() {
 		return xShotCoord;
 	}
-	public void setXShotCoord(int xCoord) {
-		this.xShotCoord = xCoord;
-	}
+	
 	public int getYShotCoord() {
 		return yShotCoord;
-	}
-	public void setYShotCoord(int yCoord) {
-		this.yShotCoord = yCoord;
 	}
 	
 	public void makeRandomShot(int fieldSize) {

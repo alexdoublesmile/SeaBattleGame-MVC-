@@ -2,10 +2,12 @@ package com.plohoy.seabattle.view;
 
 import com.plohoy.seabattle.model.*;
 
-public interface SeaBattleView {
+public interface GameView {
 
 	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
 			Labels opponentLabels);
+	
+	void playAgain();
 		
 	void setBattlefieldSize(int battlefieldSize);
 

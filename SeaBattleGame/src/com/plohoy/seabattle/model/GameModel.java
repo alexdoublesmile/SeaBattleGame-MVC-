@@ -2,7 +2,7 @@ package com.plohoy.seabattle.model;
 
 import com.plohoy.seabattle.ai.AIMakeShot;
 
-public class SeaBattleModel {
+public class GameModel {
 
 	private AIMakeShot aIShoots;
 	private Field playerShips;
@@ -55,6 +55,13 @@ public class SeaBattleModel {
 	}
 
 	public AIMakeShot getAIShoots() {
+		return aIShoots;
+	}
+	
+	public AIMakeShot aIShootsRandomly(int fieldSize) {
+		do { aIShoots.makeRandomShot(fieldSize); }
+		while (opponentShots.shotSamePlace(aIShoots.getXShotCoord(), 
+											aIShoots.getYShotCoord()));
 		return aIShoots;
 	}
 }

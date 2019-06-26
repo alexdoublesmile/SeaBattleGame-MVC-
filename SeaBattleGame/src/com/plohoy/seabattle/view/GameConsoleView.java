@@ -2,9 +2,10 @@ package com.plohoy.seabattle.view;
 
 import java.util.Scanner;
 
+import com.plohoy.seabattle.main.Launcher;
 import com.plohoy.seabattle.model.*;
 
-public class SeaBattleConsoleView implements SeaBattleView{
+public class GameConsoleView implements GameView{
 
 	private int battlefieldSize = 10;
 	private int xShotCoord;
@@ -44,7 +45,7 @@ public class SeaBattleConsoleView implements SeaBattleView{
 	private Labels opponentLabels;	
 	private Scanner scan;
 	
-	public SeaBattleConsoleView() {
+	public GameConsoleView() {
 //		battleFieldLegend = new String[] {"A","B","C","D","E","F","G","H","I","J"};
 		battleFieldLegend = new int[battlefieldSize];
 		playerBattleField = new String[battlefieldSize][battlefieldSize];
@@ -103,12 +104,12 @@ public class SeaBattleConsoleView implements SeaBattleView{
 	
 	public void drawShips(String[][] field, Field ships, boolean isVisible) {
 		for(Ship ship : ships.getBattleField()) {
-			if(ship.isShipAlive()) {
+			if(ship.checkShipAlive()) {
 				for(Cell cell : ship.getCells()) {
 					if(isVisible) {
 						drawTheCell(field, cell, LIVE_CELL);
 					}
-					if(!cell.isCellAlive()) {
+					if(!cell.checkCellAlive()) {
 						drawTheCell(field, cell, WOUNDED_CELL);
 					} 
 				}
@@ -321,5 +322,16 @@ public class SeaBattleConsoleView implements SeaBattleView{
 		
 	public void closeScanner() {
 		getScanner().close();
+	}
+	
+	@Override
+	public void playAgain() {
+		displayConfirmMessage(AGAIN_MESSAGE);
+		if(playAgainAnswer == 0) {
+			new Launcher().exec();
+		} else {
+			closeScanner();
+			System.exit(0);
+		}
 	}
 }

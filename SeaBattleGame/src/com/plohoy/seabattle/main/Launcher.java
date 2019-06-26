@@ -16,11 +16,11 @@ public class Launcher {
 		StartView newStartView = new StartView();
 		StartModel newStartModel = new StartModel();
 		
-		SeaBattleView theView = newStartModel.viewModeChoose(newStartView.getViewChoice());
+		GameView theView = newStartModel.viewModeChoose(newStartView.getViewChoice());
 		
-		SeaBattleModel theModel = new SeaBattleModel();
+		GameModel theModel = new GameModel();
 			
-		SeaBattleController theController = new SeaBattleController(theModel, theView);
+		GameController theController = new GameController(theModel, theView);
 		
 		
 	}

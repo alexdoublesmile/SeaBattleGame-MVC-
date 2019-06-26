@@ -55,7 +55,7 @@ public class Ship {
 		aroundCells.addAll(removeDuplicateCellsFromTerritory);
 	}
 	
-	public boolean isShipOutOfField(int bottom, int top) {
+	public boolean checkShipOutOfField(int bottom, int top) {
 		for(Cell cell : cells) {
 			if(cell.getXCoord() < bottom || cell.getXCoord() > top ||
 			   cell.getYCoord() < bottom || cell.getYCoord() > top	) {
@@ -65,9 +65,9 @@ public class Ship {
 		return false;
 	}
 
-	public boolean isShipNotDetached(Ship ctrlShip) {		
+	public boolean checkShipTouch(Ship ctrlShip) {		
 		for (Cell cell : cells) {		
-			if (cell.isCellNotDetached(ctrlShip.getCells(), cell)) {
+			if (cell.checkCellTouch(ctrlShip.getCells(), cell)) {
 				return true;
 			}
 		}
@@ -83,9 +83,9 @@ public class Ship {
 		return false;
 	}
 	
-	public boolean isShipAlive() {
+	public boolean checkShipAlive() {
 		for(Cell cell : cells) {
-			if(cell.isCellAlive()) {
+			if(cell.checkCellAlive()) {
 				return true;
 			}
 		}

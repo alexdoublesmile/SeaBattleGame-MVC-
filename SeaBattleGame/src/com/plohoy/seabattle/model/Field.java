@@ -5,26 +5,26 @@ import java.util.*;
 public class Field {
 
 	private ArrayList<Ship> battleField = new ArrayList<Ship>();
-	private int[] templateOfBattleField = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
+	private int[] pattern = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 	private Random random;
 
 	Field(int fieldSize) {	
 		random = new Random();
-		for(int i = 0; i < templateOfBattleField.length; i++) {
+		for(int i = 0; i < pattern.length; i++) {
 			Ship ship;
 			do {
 				int x = random.nextInt(fieldSize);
 				int y = random.nextInt(fieldSize);
 				int position = random.nextInt(2);
-				ship = new Ship(x, y, templateOfBattleField[i], position, fieldSize);
-			} while(ship.isShipOutOfField(0, fieldSize - 1) || isShipNotDetached(ship));
+				ship = new Ship(x, y, pattern[i], position, fieldSize);
+			} while(ship.checkShipOutOfField(0, fieldSize - 1) || checkShipTouch(ship));
 			battleField.add(ship);
 		}
 	}
 
-	public boolean isShipNotDetached(Ship ctrlShip) {
+	public boolean checkShipTouch(Ship someShip) {
 		for(Ship ship : battleField) {
-			if(ship.isShipNotDetached(ctrlShip)) {
+			if(ship.checkShipTouch(someShip)) {
 				return true;
 			}
 		}
@@ -42,7 +42,7 @@ public class Field {
 	
 	public boolean checkAnyShipAlive() {
 		for(Ship ship : battleField) {
-			if(ship.isShipAlive()) {
+			if(ship.checkShipAlive()) {
 				return true;
 			}
 		}
@@ -54,6 +54,6 @@ public class Field {
 	}
 
 	public void setPattern(int[] pattern) {
-		this.templateOfBattleField = pattern;
+		this.pattern = pattern;
 	}
 }

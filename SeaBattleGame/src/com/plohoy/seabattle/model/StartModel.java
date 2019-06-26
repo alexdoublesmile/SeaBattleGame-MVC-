@@ -1,28 +1,23 @@
 package com.plohoy.seabattle.model;
 
-import com.plohoy.seabattle.view.SeaBattle3DView;
-import com.plohoy.seabattle.view.SeaBattleConsoleView;
-import com.plohoy.seabattle.view.SeaBattleView;
+import com.plohoy.seabattle.view.Game3DView;
+import com.plohoy.seabattle.view.GameConsoleView;
+import com.plohoy.seabattle.view.GameView;
 
 public class StartModel {
 
-
-	public SeaBattleView viewModeChoose(int viewChoice) {
-		SeaBattleView newView = null;
+	public GameView viewModeChoose(int viewChoice) {
+		GameView newView = null;
 
 		switch(viewChoice) {
-		case(0):
-			newView = new SeaBattle3DView();
-			break;
-		case(1):
-			newView = new SeaBattleConsoleView();
-			break;
-		case(2):
-			newView = new SeaBattleConsoleView();
-			System.exit(0);
-			break;
-		default:
-			break;
+			case(0):
+				newView = new Game3DView();
+				break;
+			case(1):
+				newView = new GameConsoleView();
+				break;
+			default:
+				System.exit(0);
 		}
 		return newView;
 	}

@@ -16,32 +16,20 @@ public class Cell {
 		return xCoord;
 	}
 
-	public void setXCoord(int xCoord) {
-		this.xCoord = xCoord;
-	}
-
 	public int getYCoord() {
 		return yCoord;
-	}
-
-	public void setYCoord(int yCoord) {
-		this.yCoord = yCoord;
 	}
 
 	public int getCellLife() {
 		return cellLife;
 	}
 	
-	public void setCellLife(int i) {
-		this.cellLife = i;
-	}
-	
-	public boolean isCellNotDetached(ArrayList<Cell> cells, Cell ctrlCell) {		
+	public boolean checkCellTouch(ArrayList<Cell> cells, Cell someCell) {		
 		for(Cell cell : cells) {			
 			for(int xCell = -1; xCell < 2; xCell++) {				
 				for(int yCell = -1; yCell < 2; yCell++) {				
-					if(ctrlCell.getXCoord() == cell.getXCoord() + xCell &&
-						ctrlCell.getYCoord() == cell.getYCoord() + yCell) {
+					if(someCell.getXCoord() == cell.getXCoord() + xCell &&
+						someCell.getYCoord() == cell.getYCoord() + yCell) {
 						return true;
 					}
 				}
@@ -58,7 +46,7 @@ public class Cell {
 		return false;
 	}
 	
-	public boolean isCellAlive() {	return cellLife != 0; }
+	public boolean checkCellAlive() {	return cellLife != 0; }
 
 	@Override
 	public boolean equals(Object obj) {

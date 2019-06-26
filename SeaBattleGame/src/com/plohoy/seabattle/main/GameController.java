@@ -2,18 +2,16 @@ package com.plohoy.seabattle.main;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Random;
 
-import com.plohoy.seabattle.ai.AIMakeShot;
 import com.plohoy.seabattle.model.*;
 import com.plohoy.seabattle.view.*;
 
-public class SeaBattleController {
+public class GameController {
 	
-	SeaBattleModel theModel;	
-	SeaBattleView theView;
+	GameModel theModel;	
+	GameView theView;
 	
-	SeaBattleController(SeaBattleModel theModel, SeaBattleView theView) {
+	GameController(GameModel theModel, GameView theView) {
 				
 			this.theModel = theModel;		
 			this.theView = theView;
@@ -24,12 +22,12 @@ public class SeaBattleController {
 			theModel.createAI();
 			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), 
 					theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
-			if(this.theView instanceof SeaBattle3DView) {
-				((SeaBattle3DView) theView).setVisible();
-				((SeaBattle3DView) theView).addShotListener(new shotListener());
+			if(this.theView instanceof Game3DView) {
+				((Game3DView) theView).setVisible();
+				((Game3DView) theView).addShotListener(new shotListener());
 			} else {
 				do {
-					((SeaBattleConsoleView) theView).makeShot();
+					((GameConsoleView) theView).makeShot();
 					theBattle(theView.getXShotCoord(), theView.getYShotCoord());
 					theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), 
 							theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
@@ -42,12 +40,12 @@ public class SeaBattleController {
 		@Override
 		public void mousePressed(MouseEvent e) {
 			super.mousePressed(e);
-			((SeaBattle3DView) theView).setXShotCoord(e.getX()/(((SeaBattle3DView) theView).getCELL_PX_SIZE()));
-			((SeaBattle3DView) theView).setYShotCoord(e.getY()/(((SeaBattle3DView) theView).getCELL_PX_SIZE()));
-			if(e.getButton() == ((SeaBattle3DView) theView).checkIsItShot()) {
+			((Game3DView) theView).setXShotCoord(e.getX()/(((Game3DView) theView).getCELL_PX_SIZE()));
+			((Game3DView) theView).setYShotCoord(e.getY()/(((Game3DView) theView).getCELL_PX_SIZE()));
+			if(e.getButton() == ((Game3DView) theView).checkIsItShot()) {
 				theBattle(theView.getXShotCoord(), theView.getYShotCoord());
 			}
-			if(e.getButton() == ((SeaBattle3DView) theView).checkIsItLabel()) {
+			if(e.getButton() == ((Game3DView) theView).checkIsItLabel()) {
 				System.out.println("click mouse right-button");
 			}
 		}		
@@ -61,30 +59,31 @@ public class SeaBattleController {
 		theModel.getPlayerShots().add(x, y, true);
 		if(theModel.getOpponentShips().checkHit(x, y)) {
 			for(Ship ship : theModel.getOpponentShips().getBattleField()) {
-				if(!ship.isShipAlive() && ship.checkShipHit(x, y)){
+				if(!ship.checkShipAlive() && ship.checkShipHit(x, y)){
 					for(Cell cell : ship.getAroundCells()) {
 						theModel.getPlayerShots().add(cell.getXCoord(), cell.getYCoord(), true);
 					}
-					if(this.theView instanceof SeaBattle3DView) {
-						((SeaBattle3DView) theView).repaintOpponentView();
+					if(this.theView instanceof Game3DView) {
+						((Game3DView) theView).repaintOpponentView();
 					}
 					if(!theModel.getOpponentShips().checkAnyShipAlive()) {
 						theView.displayMessage(theView.getWINNER_MESSAGE());
-						playAgain();
+						theView.playAgain();
 					} else {
 //						theView.displayMessage(theView.getSINK_THE_SHIP_MESSAGE());
 					}
 				}
 			}				
 		} else {
-			opponentShoots(aIShootsRandomly().getXShotCoord(), aIShootsRandomly().getYShotCoord());
-			if(this.theView instanceof SeaBattle3DView) {
-				((SeaBattle3DView) theView).repaintOpponentView();
-				((SeaBattle3DView) theView).repaintPlayerView();
+			opponentShoots(theModel.aIShootsRandomly(theView.getBattlefieldSize()).getXShotCoord(), 
+							theModel.aIShootsRandomly(theView.getBattlefieldSize()).getYShotCoord());
+			if(this.theView instanceof Game3DView) {
+				((Game3DView) theView).repaintOpponentView();
+				((Game3DView) theView).repaintPlayerView();
 			}
 		}
-		if(this.theView instanceof SeaBattle3DView) {
-			((SeaBattle3DView) theView).repaintOpponentView();
+		if(this.theView instanceof Game3DView) {
+			((Game3DView) theView).repaintOpponentView();
 		}		
 	}
 	
@@ -95,34 +94,11 @@ public class SeaBattleController {
 		} else {
 			if(!theModel.getPlayerShips().checkAnyShipAlive()) {
 				theView.displayMessage(theView.getLOOSER_MESSAGE());
-				playAgain();
+				theView.playAgain();
 			} else {
-				opponentShoots(aIShootsRandomly().getXShotCoord(), aIShootsRandomly().getYShotCoord());
+				opponentShoots(theModel.aIShootsRandomly(theView.getBattlefieldSize()).getXShotCoord(), 
+						theModel.aIShootsRandomly(theView.getBattlefieldSize()).getYShotCoord());
 			}
-		}
-	}
-	
-	public AIMakeShot aIShootsRandomly() {
-		do {
-			theModel.getAIShoots().makeRandomShot(theView.getBattlefieldSize());	
-		}
-		while (theModel.getOpponentShots().shotSamePlace(theModel.getAIShoots().getXShotCoord(), 
-														theModel.getAIShoots().getYShotCoord()));
-		return theModel.getAIShoots();
-	}
-	
-	public void playAgain() {
-		theView.displayConfirmMessage(theView.getAGAIN_MESSAGE());
-		if(theView.getPlayAgainAnswer() == 0) {
-			if(this.theView instanceof SeaBattle3DView) {
-				((SeaBattle3DView) theView).setInvisible();
-			}
-			new Launcher().exec();
-		} else {
-			if(theView instanceof SeaBattleConsoleView) {
-				((SeaBattleConsoleView)theView).closeScanner();
-			}
-			System.exit(0);
 		}
 	}
 }

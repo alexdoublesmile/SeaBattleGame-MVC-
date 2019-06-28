@@ -34,15 +34,15 @@ public class Game3DView extends JFrame implements GameView {
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
 	private int playAgainAnswer;
 
-	BattleFieldPlayerPanel playerBattleFieldPanel;
-	BattleFieldOpponentPanel opponentBattleFieldPanel;	
-	JPanel middlePanel;
-	Field playerShips;
-	Field opponentShips;	
-	Shots playerShots;
-	Shots opponentShots;	
-	Labels playerLabels;
-	Labels opponentLabels;	
+	private BattleFieldPlayerPanel playerBattleFieldPanel;
+	private BattleFieldOpponentPanel opponentBattleFieldPanel;	
+	private JPanel middlePanel;
+	private Field playerShips;
+	private Field opponentShips;	
+	private Shots playerShots;
+	private Shots opponentShots;	
+	private Labels playerLabels;
+	private Labels opponentLabels;	
 	
 	public Game3DView() {
 		UIManager.getSystemLookAndFeelClassName();

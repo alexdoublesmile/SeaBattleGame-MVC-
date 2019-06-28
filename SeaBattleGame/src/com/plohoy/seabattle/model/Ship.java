@@ -10,15 +10,26 @@ public class Ship {
 
 	Ship(int x, int y, int lenght, int position, int fieldSize) {
 
-		createShip(x, y, lenght, position);
+		createShipAuto(x, y, lenght, position);
 		createShipTerritory(fieldSize);	
 	}
 	
-	public void createShip(int x, int y, int lenght, int position) {
+	Ship(int x, int y, int fieldSize) {
+
+		createShipManually(x, y);
+		createShipTerritory(fieldSize);	
+	}
+	
+	public void createShipAuto(int x, int y, int lenght, int position) {
 		for(int i = 0; i < lenght; i++) {
 			cells.add(new Cell(x + i*((position == 1)? 0 : 1),
 							   y + i*((position == 1)? 1 : 0)));
 		}
+	}
+	
+	public void createShipManually(int x, int y) {
+		cells.add(new Cell(x, y));
+
 	}
 	
 	public void createShipTerritory(int fieldSize) {

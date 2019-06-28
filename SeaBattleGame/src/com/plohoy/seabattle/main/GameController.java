@@ -8,23 +8,23 @@ import com.plohoy.seabattle.view.*;
 
 public class GameController {
 	
-	GameModel theModel;	
-	GameView theView;
+	private GameModel theModel;	
+	private GameView theView;
 	
-	GameController(GameModel theModel, GameView theView) {
+	GameController(GameModel theModel, GameView theView, int aIPower) {
 				
 			this.theModel = theModel;		
 			this.theView = theView;
 
-			theModel.createShips(theView.getBattlefieldSize());
+			theModel.createShipsAuto(theView.getBattlefieldSize());
 			theModel.createShots();
 			theModel.createLabels();
-			theModel.createAI();
+			theModel.createAI(aIPower);
 			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), 
 					theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
 			if(this.theView instanceof Game3DView) {
 				((Game3DView) theView).setVisible();
-				((Game3DView) theView).addShotListener(new shotListener());
+				((Game3DView) theView).addShotListener(new ShotListener());
 			} else {
 				do {
 					((GameConsoleView) theView).makeShot();
@@ -35,7 +35,7 @@ public class GameController {
 			}
 	}
 	
-	class shotListener extends MouseAdapter {
+	class ShotListener extends MouseAdapter {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -75,8 +75,8 @@ public class GameController {
 				}
 			}				
 		} else {
-			opponentShoots(theModel.aIShootsRandomly(theView.getBattlefieldSize()).getXShotCoord(), 
-							theModel.aIShootsRandomly(theView.getBattlefieldSize()).getYShotCoord());
+			opponentShoots(theModel.aIShoots(theView.getBattlefieldSize()).getXShotCoord(), 
+							theModel.aIShoots(theView.getBattlefieldSize()).getYShotCoord());
 			if(this.theView instanceof Game3DView) {
 				((Game3DView) theView).repaintOpponentView();
 				((Game3DView) theView).repaintPlayerView();
@@ -96,8 +96,8 @@ public class GameController {
 				theView.displayMessage(theView.getLOOSER_MESSAGE());
 				theView.playAgain();
 			} else {
-				opponentShoots(theModel.aIShootsRandomly(theView.getBattlefieldSize()).getXShotCoord(), 
-						theModel.aIShootsRandomly(theView.getBattlefieldSize()).getYShotCoord());
+				opponentShoots(theModel.aIShoots(theView.getBattlefieldSize()).getXShotCoord(), 
+						theModel.aIShoots(theView.getBattlefieldSize()).getYShotCoord());
 			}
 		}
 	}

@@ -1,10 +1,10 @@
 package com.plohoy.seabattle.model;
 
-import com.plohoy.seabattle.ai.AIMakeShot;
+import com.plohoy.seabattle.ai.AIModel;
 
 public class GameModel {
 
-	private AIMakeShot aIShoots;
+	private AIModel aIShoots;
 	private Field playerShips;
 	private Field opponentShips;
 	private Shots playerShots;
@@ -12,9 +12,18 @@ public class GameModel {
 	private Labels playerLabels;
 	private Labels opponentLabels;
 
-	public void createShips(int fieldSize) {
-		playerShips = new Field(fieldSize);
-		opponentShips = new Field(fieldSize);
+	public void createShipsAuto(int fieldSize) {
+		playerShips = new Field();
+		playerShips.setShipsAuto(fieldSize);
+		opponentShips = new Field();
+		opponentShips.setShipsAuto(fieldSize);
+	}
+	
+	public void createShipsManually(int x, int y, int fieldSize) {
+		playerShips = new Field();
+		playerShips.setShipsAuto(fieldSize);
+		opponentShips = new Field();
+		opponentShips.setShipsManually(x, y, fieldSize);
 	}
 	
 	public void createShots() {
@@ -26,8 +35,8 @@ public class GameModel {
 		playerLabels = new Labels();
 		opponentLabels = new Labels();
 	}
-	public void createAI() {
-		aIShoots = new AIMakeShot();
+	public void createAI(int power) {
+		aIShoots = new AIModel(power);
 	}
 	
 	public Field getPlayerShips() {
@@ -54,12 +63,12 @@ public class GameModel {
 		return opponentLabels;
 	}
 
-	public AIMakeShot getAIShoots() {
+	public AIModel getAIShoots() {
 		return aIShoots;
 	}
 	
-	public AIMakeShot aIShootsRandomly(int fieldSize) {
-		do { aIShoots.makeRandomShot(fieldSize); }
+	public AIModel aIShoots(int fieldSize) {
+		do { aIShoots.aIMakesShot(fieldSize); }
 		while (opponentShots.shotSamePlace(aIShoots.getXShotCoord(), 
 											aIShoots.getYShotCoord()));
 		return aIShoots;

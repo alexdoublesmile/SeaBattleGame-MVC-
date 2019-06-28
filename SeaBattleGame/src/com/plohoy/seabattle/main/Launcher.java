@@ -19,8 +19,9 @@ public class Launcher {
 		GameView theView = newStartModel.viewModeChoose(newStartView.getViewChoice());
 		
 		GameModel theModel = new GameModel();
+		System.out.println("");
 			
-		GameController theController = new GameController(theModel, theView);
+		GameController theController = new GameController(theModel, theView, newStartView.getAIPowerChoice());
 		
 		
 	}

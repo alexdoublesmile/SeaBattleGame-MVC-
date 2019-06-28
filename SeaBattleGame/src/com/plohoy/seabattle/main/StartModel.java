@@ -1,4 +1,4 @@
-package com.plohoy.seabattle.model;
+package com.plohoy.seabattle.main;
 
 import com.plohoy.seabattle.view.Game3DView;
 import com.plohoy.seabattle.view.GameConsoleView;

@@ -8,7 +8,10 @@ public class Field {
 	private int[] pattern = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 	private Random random;
 
-	Field(int fieldSize) {	
+	Field() {	
+	}
+	
+	public void setShipsAuto(int fieldSize) {
 		random = new Random();
 		for(int i = 0; i < pattern.length; i++) {
 			Ship ship;
@@ -19,6 +22,14 @@ public class Field {
 				ship = new Ship(x, y, pattern[i], position, fieldSize);
 			} while(ship.checkShipOutOfField(0, fieldSize - 1) || checkShipTouch(ship));
 			battleField.add(ship);
+		}
+	}
+
+	public void setShipsManually(int x, int y, int fieldSize) {
+		Ship ship = new Ship(x, y, fieldSize);
+		battleField.add(ship);
+		if(ship.checkShipOutOfField(0, fieldSize - 1) || checkShipTouch(ship)) {
+			battleField.remove(ship);
 		}
 	}
 

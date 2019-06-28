@@ -17,14 +17,13 @@ public class StartView extends JFrame {
 	private String ERROR_MESSAGE = "Этот выбор уже скоро будет доступен :)";
 
 	public StartView() {
-		while(playModeChoice == 0) {
-			playModeChoice = displayOpponentHumanConfirmMessage(CONFIRM_HUMAN_OPPONENT);
-			if(playModeChoice == 0) {
-				displayErrorMessage(ERROR_MESSAGE);
-			}
-		}
 		viewChoice = displayViewConfirmMessage(CONFIRM_VIEW);
-		if(playModeChoice > 0 ) {
+		playModeChoice = displayOpponentHumanConfirmMessage(CONFIRM_HUMAN_OPPONENT);
+		while(playModeChoice > 0) {
+				displayErrorMessage(ERROR_MESSAGE);
+				playModeChoice = displayOpponentHumanConfirmMessage(CONFIRM_HUMAN_OPPONENT);
+		}
+		if(playModeChoice == 0 ) {
 			aIPowerChoice = displayOpponentPowerConfirmMessage(CONFIRM_AI_POWER);
 			while(aIPowerChoice > 0) {
 				displayErrorMessage(ERROR_MESSAGE);
@@ -60,7 +59,7 @@ public class StartView extends JFrame {
 	}
 	
 	public int displayOpponentHumanConfirmMessage(String message) {
-		String[] answers = {"С человеком (в раработке)", "С компьютером"};
+		String[] answers = {"С компьютером", "С человеком (в раработке)", };
 		return JOptionPane.showOptionDialog(
 				this, message, "Выбор соперника", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, answers, answers[1]);

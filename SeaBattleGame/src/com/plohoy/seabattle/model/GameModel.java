@@ -11,19 +11,29 @@ public class GameModel {
 	private Shots opponentShots;
 	private Labels playerLabels;
 	private Labels opponentLabels;
+	private int fieldSize;
+	private final int MAX_AROUND_CELLS = 50;
 
-	public void createShipsAuto(int fieldSize) {
-		playerShips = new Field();
-		playerShips.setShipsAuto(fieldSize);
-		opponentShips = new Field();
-		opponentShips.setShipsAuto(fieldSize);
+	public void createShipsAuto(int fieldSize, int aIPower) {
+		this.fieldSize = fieldSize;
+		playerShips = new Field(fieldSize);
+		playerShips.setShipsAuto();
+		if(aIPower > 1) {
+			do {
+				opponentShips = new Field(fieldSize);
+				opponentShips.setShipsAuto(aIPower);
+			} while(opponentShips.getCountAroundCells() > MAX_AROUND_CELLS);
+		} else {
+			opponentShips = new Field(fieldSize);
+			opponentShips.setShipsAuto(aIPower);
+		}
 	}
 	
 	public void createShipsManually(int x, int y, int fieldSize) {
-		playerShips = new Field();
-		playerShips.setShipsAuto(fieldSize);
-		opponentShips = new Field();
-		opponentShips.setShipsManually(x, y, fieldSize);
+		playerShips = new Field(fieldSize);
+		playerShips.setShipsAuto();
+		opponentShips = new Field(fieldSize);
+		opponentShips.setShipsManually(x, y);
 	}
 	
 	public void createShots() {
@@ -35,8 +45,8 @@ public class GameModel {
 		playerLabels = new Labels();
 		opponentLabels = new Labels();
 	}
-	public void createAI(int power) {
-		aIShoots = new AIPlayer(power);
+	public void createAI(int power, int fieldSize, int[] pattern) {
+		aIShoots = new AIPlayer(power, fieldSize, pattern);
 	}
 	
 	public Field getPlayerShips() {
@@ -67,10 +77,10 @@ public class GameModel {
 		return aIShoots;
 	}
 	
-	public AIPlayer aIShoots(int fieldSize, Shots opponentShots, Field playerShips) {
+	public AIPlayer aIShoots(Shots opponentShots, Field playerShips) {
 		int n = 1;
 		do { 
-			aIShoots.aIMakesShot(fieldSize, opponentShots, playerShips); 
+			aIShoots.aIMakesShot(opponentShots, playerShips); 
 			System.out.println("----------------------------------------------------------");
 			System.out.println("----------------------------------------------------------");
 			System.out.println(n + " попытка выстрела: (" + (aIShoots.getXShotCoord() + 1) + ", " + (aIShoots.getYShotCoord() + 1) + ") ");

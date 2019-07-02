@@ -18,10 +18,10 @@ public class GameController {
 			this.theModel = theModel;		
 			this.theView = theView;
 			System.out.println("");
-			theModel.createShipsAuto(theView.getBattlefieldSize());
+			theModel.createShipsAuto(theView.getBattlefieldSize(), aIPower);
 			theModel.createShots();
 			theModel.createLabels();
-			theModel.createAI(aIPower);
+			theModel.createAI(aIPower, theView.getBattlefieldSize(), theModel.getPlayerShips().getPattern());
 			
 			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), 
 					theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
@@ -79,7 +79,7 @@ public class GameController {
 			}				
 		} else {
 			
-			aIShoots = theModel.aIShoots(theView.getBattlefieldSize(), theModel.getOpponentShots(), theModel.getPlayerShips());
+			aIShoots = theModel.aIShoots(theModel.getOpponentShots(), theModel.getPlayerShips());
 			opponentShoots(aIShoots.getXShotCoord(), aIShoots.getYShotCoord());
 			if(this.theView instanceof Game3DView) {
 				((Game3DView) theView).repaintOpponentView();
@@ -108,7 +108,7 @@ public class GameController {
 				System.out.println("----------------------------------------------------------");
 				System.out.println("----------------- попадание!!! ----------------");
 				System.out.println("----------------------------------------------------------");
-				aIShoots = theModel.aIShoots(theView.getBattlefieldSize(), theModel.getOpponentShots(), theModel.getPlayerShips());
+				aIShoots = theModel.aIShoots(theModel.getOpponentShots(), theModel.getPlayerShips());
 				opponentShoots(aIShoots.getXShotCoord(), aIShoots.getYShotCoord());
 			}
 		}

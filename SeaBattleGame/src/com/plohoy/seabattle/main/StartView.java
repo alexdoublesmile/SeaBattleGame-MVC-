@@ -25,10 +25,6 @@ public class StartView extends JFrame {
 		}
 		if(playModeChoice == 0 ) {
 			aIPowerChoice = displayOpponentPowerConfirmMessage(CONFIRM_AI_POWER);
-			while(aIPowerChoice > 1) {
-				displayErrorMessage(ERROR_MESSAGE);
-				aIPowerChoice = displayOpponentPowerConfirmMessage(CONFIRM_AI_POWER);
-			}
 		}
 		shipsArrangementChoice = displayCreateShipMethodConfirmMessage(CONFIRM_SHIPS_ARRANGMENT);
 		while(shipsArrangementChoice > 0) {
@@ -45,7 +41,7 @@ public class StartView extends JFrame {
 	}
 	
 	public int displayOpponentPowerConfirmMessage(String message) {
-		String[] answers = {"Очень глупенький ИИ", "Середнячок", "Гроссмейстер (в разработке)"};
+		String[] answers = {"Очень глупенький ИИ", "Середнячок", "Гроссмейстер"};
 		return JOptionPane.showOptionDialog(
 				this, message, "Выбор Искусственного Интеллекта", JOptionPane.YES_NO_CANCEL_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, answers, answers[2]);

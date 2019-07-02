@@ -1,8 +1,11 @@
 package com.plohoy.seabattle.ai;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.TreeSet;
 
 import com.plohoy.seabattle.model.Cell;
 import com.plohoy.seabattle.model.Field;
@@ -17,9 +20,14 @@ public class AIPlayer implements Player {
 	
 	private Shots aIShots;
 	private Field playerShips;
+	private int fieldSize;
 
 	private ArrayList<Cell> cellTerritory = new ArrayList<Cell>();
-	private HashSet<Cell> removeDuplicatesFromCellTerritory;
+	private ArrayList<Cell> fieldTerritory = new ArrayList<Cell>();
+	private ArrayList<Cell> copyFieldTerritory = new ArrayList<Cell>();
+	private ArrayList<Cell> tempBestShots = new ArrayList<Cell>();
+
+	private HashSet<Cell> removeDuplicatesFromCellList;
 	private int xShotCoord;
 	private int yShotCoord;
 	private boolean coordsAreReady = false;
@@ -28,14 +36,38 @@ public class AIPlayer implements Player {
 	private boolean mainAxisIsX;
 	private boolean mainAxisIsY;
 	private int randomIndex;
+
+	private int[] pattern;
+//	private TreeSet<Integer> typesOfShips = new TreeSet<Integer>();
+ 
+	private int numberOfStartOneDeckShips;
+	private int numberOfStartTwoDeckShips;
+	private int numberOfStartThreeDeckShips;
+	private int numberOfStartFourDeckShips;
+	private int numberOfShotDownOneDeckShips;
+	private int numberOfShotDownTwoDeckShips;
+	private int numberOfShotDownThreeDeckShips;
+	private int numberOfShotDownFourDeckShips;
+	private int numberOfAliveOneDeckShips;
+	private int numberOfAliveTwoDeckShips;
+	private int numberOfAliveThreeDeckShips;
+	private int numberOfAliveFourDeckShips;
+
 	private int thePower = 0;
 	private int score;
 
 	private Random random = new Random();
 	
-	public AIPlayer(int power) {
+	public AIPlayer(int power, int fieldSize, int[] pattern) {
 		
 		this.thePower = power;
+		this.pattern = pattern;
+		this.fieldSize = fieldSize;
+		setNumberOfAllTypesShips();
+		initializeAllTerritory();
+//		for(int i = 0; i < pattern.length; i++) {
+//			typesOfShips.add(pattern[i]);
+//		}
 	}
 	
 	public int getXShotCoord() {
@@ -50,40 +82,55 @@ public class AIPlayer implements Player {
 		this.lastCell = lastCell;
 	}
 	
-	public void aIMakesShot(int fieldSize, Shots opponentShots, Field playerShips) {
+	public void aIMakesShot(Shots opponentShots, Field playerShips) {
 		this.playerShips = playerShips;
 		this.aIShots = opponentShots;
+		
 		switch(thePower) {
 		case(0):
-			xShotCoord = random.nextInt(fieldSize);
-			yShotCoord = random.nextInt(fieldSize);
+			randomShot();
 			break;
 		case(1):
 			coordsAreReady = false;
-			smartShot(fieldSize);
-			if (!coordsAreReady) {
-				
-				xShotCoord = random.nextInt(fieldSize);
-				yShotCoord = random.nextInt(fieldSize);
-				
-				System.out.println("----------------------------------------------------------");
-				System.out.println("------------------- сформированы координаты рандом: (" + (xShotCoord + 1) + ", " + (yShotCoord + 1) + ")");
-				
+			smartShot();
+			if (!coordsAreReady) {	
+				randomShot();
 			}
 			break;
 		case(2):
-			System.out.println("------------------------ лучший выстрел (пока нет) ----------------------------------");
-			xShotCoord = random.nextInt(fieldSize);
-			yShotCoord = random.nextInt(fieldSize);
-			
-//			amazingShot(fieldSize);
+			coordsAreReady = false;
+			smartShot();
+			if (!coordsAreReady) {	
+				intuitiveShot();
+//				System.out.println("----------------------------------------------------------");
+//				System.out.println("------ всего однопалубных: " + numberOfStartOneDeckShips);
+//				System.out.println("------ всего двухпалубных: " + numberOfStartTwoDeckShips);
+//				System.out.println("------ всего трехпалубных: " + numberOfStartThreeDeckShips);
+//				System.out.println("------ всего четырехпалубных: " + numberOfStartFourDeckShips);
+//				System.out.println("----------------------------------------------------------");
+//				System.out.println("------ потопленных однопалубных: " + numberOfShotDownOneDeckShips);
+//				System.out.println("------ потопленных двухпалубных: " + numberOfShotDownTwoDeckShips);
+//				System.out.println("------ потопленных трехпалубных: " + numberOfShotDownThreeDeckShips);
+//				System.out.println("------ потопленных четырехпалубных: " + numberOfShotDownFourDeckShips);
+				System.out.println("----------------------------------------------------------");
+				System.out.println("------ количество живых 1-палубных: " + numberOfAliveOneDeckShips);
+				System.out.println("------ количество живых 2-палубных: " + numberOfAliveTwoDeckShips);
+				System.out.println("------ количество живых 3-палубных: " + numberOfAliveThreeDeckShips);
+				System.out.println("------ количество живых 4-палубных: " + numberOfAliveFourDeckShips);
+//				randomShot();
+			}
 			break;
 		default:
-			;
+			System.exit(0);
 		}
 	}
 
-	public void smartShot(int fieldSize) {		
+	public void randomShot() {
+		xShotCoord = random.nextInt(fieldSize);
+		yShotCoord = random.nextInt(fieldSize);
+	}
+	
+	public void smartShot() {		
 		checkShipsTerritory();
 		for(Ship ship : playerShips.getBattleField()) {
 			if(ship.checkShipIsShotDown()) {
@@ -92,8 +139,8 @@ public class AIPlayer implements Player {
 					System.out.println("----------------------------------------------------------");
 					System.out.println("---------------------- подбито несколько палуб ---------");
 					
-					whatIsMainAxis(ship, fieldSize);
-					setExtremeShotDownCellsTerritoty(ship, fieldSize);
+					whatIsMainAxis(ship);
+					setExtremeShotDownCellsTerritoty(ship);
 					
 					randomIndex = new Random().nextInt(cellTerritory.size());
 					xShotCoord = cellTerritory.get(randomIndex).getXCoord();
@@ -110,7 +157,7 @@ public class AIPlayer implements Player {
 					System.out.println("----------------------------------------------------------");
 					System.out.println("---------------------- подбита только одна палуба ---------");
 					
-					setShotDownCellTerritory(lastCell, fieldSize);
+					setShotDownCellTerritory(lastCell);
 					
 					
 					System.out.println("----------------------------------------------------------");
@@ -140,10 +187,6 @@ public class AIPlayer implements Player {
 				}
 			}
 		}	
-	}
-	
-	public void amazingShot(int fieldSize) {
-		
 	}
 	
 	public void checkShipsTerritory() {
@@ -180,7 +223,7 @@ public class AIPlayer implements Player {
 		return true;
 	}
 	
-	 public boolean cellTerritoryIsNotOutOfField(Cell cell, int xCell, int yCell, int fieldSize) {
+	 public boolean cellTerritoryIsNotOutOfField(Cell cell, int xCell, int yCell) {
 		if(cell.getXCoord() + xCell < 0 || cell.getXCoord() + xCell > fieldSize - 1 ||
 			cell.getYCoord() + yCell < 0 || cell.getYCoord() + yCell > fieldSize - 1) {
 			return false;
@@ -195,7 +238,7 @@ public class AIPlayer implements Player {
 		return false;
 	}
 		
-	public void setShotDownCellTerritory(Cell cell, int fieldSize) {
+	public void setShotDownCellTerritory(Cell cell) {
 		if(mainAxisIsY) {
 			
 			System.out.println("----------------------------------------------------------");
@@ -206,7 +249,7 @@ public class AIPlayer implements Player {
 			
 			for(int yCell = -1; yCell < 2; yCell++) {
 				if(cellTerritoryIsNotThisCell(cell, 0, yCell) && 
-						cellTerritoryIsNotOutOfField(cell, 0, yCell, fieldSize) && 
+						cellTerritoryIsNotOutOfField(cell, 0, yCell) && 
 						cellTerritoryIsNotDiagonal(0, yCell)) {
 					cellTerritory.add(new Cell(cell.getXCoord(), cell.getYCoord() + yCell));
 				}
@@ -232,7 +275,7 @@ public class AIPlayer implements Player {
 			
 			for(int xCell = -1; xCell < 2; xCell++) {
 				if(cellTerritoryIsNotThisCell(cell, xCell, 0) && 
-						cellTerritoryIsNotOutOfField(cell, xCell, 0, fieldSize) && 
+						cellTerritoryIsNotOutOfField(cell, xCell, 0) && 
 						cellTerritoryIsNotDiagonal(xCell, 0)) {
 					cellTerritory.add(new Cell(cell.getXCoord() + xCell, cell.getYCoord()));
 				}
@@ -252,7 +295,7 @@ public class AIPlayer implements Player {
 			for(int xCell = -1; xCell < 2; xCell++) {
 				for(int yCell = -1; yCell < 2; yCell++) {
 					if(cellTerritoryIsNotThisCell(cell, xCell, yCell) && 
-							cellTerritoryIsNotOutOfField(cell, xCell, yCell, fieldSize) && 
+							cellTerritoryIsNotOutOfField(cell, xCell, yCell) && 
 							cellTerritoryIsNotDiagonal(xCell, yCell)) {
 						cellTerritory.add(new Cell(cell.getXCoord() + xCell, cell.getYCoord() + yCell));
 					}
@@ -261,17 +304,17 @@ public class AIPlayer implements Player {
 		}
 	}
 		
-	public void setExtremeShotDownCellsTerritoty(Ship ship, int fieldSize) {
+	public void setExtremeShotDownCellsTerritoty(Ship ship) {
 
 		System.out.println("----------------------------------------------------------");
 		System.out.println("------ находим первую €чейку в подбитом корабле.. ");
 		
-		setShotDownCellTerritory(findFirstExtremeShotDownCell(ship, fieldSize), fieldSize);
+		setShotDownCellTerritory(findFirstExtremeShotDownCell(ship));
 		
 		System.out.println("----------------------------------------------------------");
 		System.out.println("------ находим последнюю €чейку в подбитом корабле.. ");
 		
-		setShotDownCellTerritory(findLastExtremeShotDownCell(ship, fieldSize), fieldSize);
+		setShotDownCellTerritory(findLastExtremeShotDownCell(ship));
 
 		System.out.println("----------------------------------------------------------");
 		System.out.println("------ »скома€ территори€: ");
@@ -284,14 +327,14 @@ public class AIPlayer implements Player {
 		System.out.println("------- удал€ем одинаковые €чейки из списка территории..");
 		
 //		removeShotsFromTerritory();
-		removeDuplicatesFromCellTerritory();
+		removeDuplicatesFromCellList(cellTerritory);
 		
 		System.out.println("----------------------------------------------------------");
 		System.out.println("------  онечна€ территори€: ");
 		int num = 1;
 		for(Cell cell : cellTerritory) {
-			System.out.println("ячейка территории є" + n + ": (" + (cell.getXCoord() + 1) + ", " + (cell.getYCoord() + 1) + ")");
-			n++;
+			System.out.println("ячейка территории є" + num + ": (" + (cell.getXCoord() + 1) + ", " + (cell.getYCoord() + 1) + ")");
+			num++;
 		}
 		
 		mainAxisIsY = false;
@@ -300,7 +343,7 @@ public class AIPlayer implements Player {
 		
 	}
 		
-	public Cell findFirstExtremeShotDownCell(Ship ship, int fieldSize) {
+	public Cell findFirstExtremeShotDownCell(Ship ship) {
 		int x = fieldSize - 1;
 		int y = fieldSize - 1;
 
@@ -343,7 +386,7 @@ public class AIPlayer implements Player {
 		return firstExtremeCell;
 	}
 	
-	public Cell findLastExtremeShotDownCell(Ship ship, int fieldSize) {
+	public Cell findLastExtremeShotDownCell(Ship ship) {
 		int x = 0;
 		int y = 0;
 
@@ -389,10 +432,10 @@ public class AIPlayer implements Player {
 
 	}
 	
-	public void removeDuplicatesFromCellTerritory() {
-		removeDuplicatesFromCellTerritory = new HashSet<Cell>(cellTerritory);
-		cellTerritory.clear();
-		cellTerritory.addAll(removeDuplicatesFromCellTerritory);
+	public void removeDuplicatesFromCellList(ArrayList<Cell> cellList) {
+		removeDuplicatesFromCellList = new HashSet<Cell>(cellList);
+		cellList.clear();
+		cellList.addAll(removeDuplicatesFromCellList);
 	}
 	
 	public boolean moreThanOneCellHit(Ship ship) {
@@ -408,7 +451,7 @@ public class AIPlayer implements Player {
 		return false;
 	}
 		
-	public void whatIsMainAxis(Ship ship, int fieldSize) {	
+	public void whatIsMainAxis(Ship ship) {	
 
 		
 		System.out.println("----------------------------------------------------------");
@@ -444,5 +487,347 @@ public class AIPlayer implements Player {
 		firstCellXCoord = fieldSize;
 		firstCellYCoord = fieldSize;
 	}
- 
+	
+	public void intuitiveShot() {
+		calcNumberOfAliveShips();
+			
+		if(numberOfAliveFourDeckShips == 0 && 
+				numberOfAliveThreeDeckShips == 0 &&
+				numberOfAliveTwoDeckShips == 0) {
+			System.out.println("------------------------------");
+			System.out.println("стрел€ем наобум..");
+			randomShot();
+		} else {
+			masterShot();
+		}
+	}
+	
+	public void masterShot() {
+		if(!(numberOfAliveFourDeckShips == 0)) {
+			System.out.println("------------------------------");
+			System.out.println("есть живой 4 палубный..");
+			initializeFreeTerritory();
+			copyFreeTerritory();
+			findXLineOfFourCells();
+			findYLineOfFourCells();
+			removeDuplicatesFromCellList(tempBestShots);
+			findBestCoordinates();		
+		} else {
+			if(!(numberOfAliveThreeDeckShips == 0)) {
+				System.out.println("------------------------------");
+				System.out.println("есть живой 3 палубный..");
+
+				initializeFreeTerritory();
+				copyFreeTerritory();
+				findXLineOfThreeCells();
+				findYLineOfThreeCells();
+				removeDuplicatesFromCellList(tempBestShots);
+				findBestCoordinates();				} 
+			else {
+				if(!(numberOfAliveTwoDeckShips == 0)) {
+					System.out.println("------------------------------");
+					System.out.println("есть живой 2 палубный..");
+
+					initializeFreeTerritory();
+					copyFreeTerritory();
+					findXLineOfTwoCells();
+					findYLineOfTwoCells();
+					removeDuplicatesFromCellList(tempBestShots);
+					findBestCoordinates();					
+				} 
+			}
+		}	
+	}
+	
+	public void setNumberOfAllTypesShips() {
+		for(int i = 0; i < pattern.length; i++) {
+			switch(pattern[i]) {
+			case(1):
+				numberOfStartOneDeckShips++; 
+				break;
+			case(2):
+				numberOfStartTwoDeckShips++;
+				break;
+			case(3):
+				numberOfStartThreeDeckShips++;
+				break;
+			case(4):
+				numberOfStartFourDeckShips++;
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
+	public void calcNumberOfShotDownShips() {
+		
+		int numberOfDecks = 0;
+		numberOfShotDownOneDeckShips = 0;
+		numberOfShotDownTwoDeckShips = 0;
+		numberOfShotDownThreeDeckShips = 0;
+		numberOfShotDownFourDeckShips = 0;
+		for(Ship ship : playerShips.getBattleField()) {
+			if(!ship.checkShipAlive()) {
+				for(Cell cell : ship.getCells()) {
+					numberOfDecks++;
+				}
+			}
+			switch(numberOfDecks) {
+			case(1):
+				numberOfShotDownOneDeckShips++; 
+				break;
+			case(2):
+				numberOfShotDownTwoDeckShips++;
+				break;
+			case(3):
+				numberOfShotDownThreeDeckShips++;
+				break;
+			case(4):
+				numberOfShotDownFourDeckShips++;
+				break;
+			default:
+				break;
+			}
+			numberOfDecks = 0;
+		}
+	}
+	
+	public void calcNumberOfAliveShips() {
+		calcNumberOfShotDownShips();
+		numberOfAliveOneDeckShips = numberOfStartOneDeckShips - numberOfShotDownOneDeckShips;
+		numberOfAliveTwoDeckShips = numberOfStartTwoDeckShips - numberOfShotDownTwoDeckShips;
+		numberOfAliveThreeDeckShips = numberOfStartThreeDeckShips - numberOfShotDownThreeDeckShips;
+		numberOfAliveFourDeckShips = numberOfStartFourDeckShips - numberOfShotDownFourDeckShips;
+		
+	}
+	
+	public void findBestCoordinatesOfFourDeckShip() {
+		initializeFreeTerritory();
+		copyFreeTerritory();
+		findXLineOfFourCells();
+		findYLineOfFourCells();
+		removeDuplicatesFromCellList(tempBestShots);
+		findBestCoordinates();
+	}
+	
+	public void findBestCoordinatesOfThreeDeckShip() {
+		initializeFreeTerritory();
+
+	}
+	
+	public void findBestCoordinatesOfTwoDeckShip() {
+		initializeFreeTerritory();
+
+	}
+	
+	public void initializeFreeTerritory() {
+		for(int i = 0; i < fieldTerritory.size(); i++) {
+			if(checkCellIsShot(fieldTerritory.get(i))) {
+				fieldTerritory.remove(fieldTerritory.get(i));
+			}
+		}
+//		int n = 1;
+//		for(Cell cell : fieldTerritory) {
+//			System.out.println("ячейка свободной территории є" + n + ": (" + (cell.getXCoord() + 1) + ", " + (cell.getYCoord() + 1) + ")");
+//			n++;
+//		}
+		
+		
+		
+	}
+	
+	public void initializeAllTerritory() {
+
+//		System.out.println("------------------------------");
+//		System.out.println("инициализируем все поле..");
+//
+//		System.out.println("------------------------------");
+//		System.out.println("размер пол€: " + fieldSize);
+		
+		for(int x = 0; x < fieldSize; x++) {
+			for(int y = 0; y < fieldSize; y++) {
+				fieldTerritory.add(new Cell(x, y));
+			}
+		}
+	}
+	
+	public void copyFreeTerritory() {
+		copyFieldTerritory = fieldTerritory;
+	}
+	
+	public void findXLineOfFourCells() {
+		int n = 1;
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getXCoord() - 1 == firstcell.getXCoord() && 
+						firstcell.getYCoord() == secondCell.getYCoord()) {
+					System.out.println("------------------------------");
+					System.out.println("нашелс€ р€д из двух €чеек..");
+					for(Cell thirdCell : fieldTerritory) {
+						if(thirdCell.getXCoord() - 1 == secondCell.getXCoord() && 
+								secondCell.getYCoord() == thirdCell.getYCoord()) {
+							System.out.println("------------------------------");
+							System.out.println("нашелс€ р€д из трех €чеек..");
+							for(Cell fourthCell : copyFieldTerritory) {
+								if(fourthCell.getXCoord() - 1 == thirdCell.getXCoord() && 
+										fourthCell.getYCoord() == thirdCell.getYCoord()) {
+									System.out.println("------------------------------");
+									System.out.println("нашелс€ р€д из четырех €чеек..");
+									
+									System.out.println("ячейка дл€ 4-палубника: (" + (firstcell.getXCoord() + 1) + ", " + (firstcell.getYCoord() + 1) + ")");
+									System.out.println("ячейка дл€ 4-палубника: (" + (secondCell.getXCoord() + 1) + ", " + (secondCell.getYCoord() + 1) + ")");
+									System.out.println("ячейка дл€ 4-палубника: (" + (thirdCell.getXCoord() + 1) + ", " + (thirdCell.getYCoord() + 1) + ")");
+									System.out.println("ячейка дл€ 4-палубника: (" + (fourthCell.getXCoord() + 1) + ", " + (fourthCell.getYCoord() + 1) + ")");
+									switch(n) {
+									case(1):
+										tempBestShots.add(secondCell);
+										break;
+									case(2):
+										tempBestShots.add(thirdCell);
+									default:
+										break;
+									}
+									n++;
+									if(n > 2) {
+										n = 1;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void findYLineOfFourCells() {
+		int n = 1;
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getYCoord() - 1 == firstcell.getYCoord() && 
+						firstcell.getXCoord() == secondCell.getXCoord()) {
+					for(Cell thirdCell : fieldTerritory) {
+						if(thirdCell.getYCoord() - 1 == secondCell.getYCoord() && 
+								secondCell.getXCoord() == thirdCell.getXCoord()) {
+							for(Cell fourthCell : copyFieldTerritory) {
+								if(fourthCell.getYCoord() - 1 == thirdCell.getYCoord() && 
+										fourthCell.getXCoord() == thirdCell.getXCoord()) {
+									switch(n) {
+									case(1):
+										tempBestShots.add(secondCell);
+										break;
+									case(2):
+										tempBestShots.add(thirdCell);
+									default:
+										break;
+									}
+									n++;
+									if(n > 2) {
+										n = 1;
+									}							
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void findXLineOfThreeCells() {
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getXCoord() - 1 == firstcell.getXCoord() && 
+						firstcell.getYCoord() == secondCell.getYCoord()) {
+					System.out.println("------------ дл€ тройного ------------------");
+					System.out.println("нашелс€ р€д из двух €чеек..");
+					for(Cell thirdCell : fieldTerritory) {
+						if(thirdCell.getXCoord() - 1 == secondCell.getXCoord() && 
+								secondCell.getYCoord() == thirdCell.getYCoord()) {
+							System.out.println("------------- дл€ тройного -----------------");
+							System.out.println("нашелс€ р€д из трех €чеек..");
+							
+
+							System.out.println("ячейка дл€ 3-палубника: (" + (firstcell.getXCoord() + 1) + ", " + (firstcell.getYCoord() + 1) + ")");
+							System.out.println("ячейка дл€ 3-палубника: (" + (secondCell.getXCoord() + 1) + ", " + (secondCell.getYCoord() + 1) + ")");
+							System.out.println("ячейка дл€ 3-палубника: (" + (thirdCell.getXCoord() + 1) + ", " + (thirdCell.getYCoord() + 1) + ")");
+
+							
+							tempBestShots.add(secondCell);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void findYLineOfThreeCells() {
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getYCoord() - 1 == firstcell.getYCoord() && 
+						firstcell.getXCoord() == secondCell.getXCoord()) {
+					for(Cell thirdCell : fieldTerritory) {
+						if(thirdCell.getYCoord() - 1 == secondCell.getYCoord() && 
+								secondCell.getXCoord() == thirdCell.getXCoord()) {
+							
+
+							System.out.println("ячейка дл€ 3-палубника: (" + (firstcell.getXCoord() + 1) + ", " + (firstcell.getYCoord() + 1) + ")");
+							System.out.println("ячейка дл€ 3-палубника: (" + (secondCell.getXCoord() + 1) + ", " + (secondCell.getYCoord() + 1) + ")");
+							System.out.println("ячейка дл€ 3-палубника: (" + (thirdCell.getXCoord() + 1) + ", " + (thirdCell.getYCoord() + 1) + ")");
+
+							
+							tempBestShots.add(secondCell);
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public void findXLineOfTwoCells() {
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getXCoord() - 1 == firstcell.getXCoord() && 
+						firstcell.getYCoord() == secondCell.getYCoord()) {
+					System.out.println("-------- дл€ двойного ----------------------");
+					System.out.println("нашелс€ р€д из двух €чеек..");
+					
+
+					System.out.println("ячейка дл€ 2-палубника: (" + (firstcell.getXCoord() + 1) + ", " + (firstcell.getYCoord() + 1) + ")");
+					System.out.println("ячейка дл€ 2-палубника: (" + (secondCell.getXCoord() + 1) + ", " + (secondCell.getYCoord() + 1) + ")");
+
+					
+					tempBestShots.add(secondCell);
+					
+				}
+			}
+		}
+	}
+	
+	public void findYLineOfTwoCells() {
+		for(Cell firstcell : fieldTerritory) {
+			for(Cell secondCell : copyFieldTerritory) {
+				if(secondCell.getYCoord() - 1 == firstcell.getYCoord() && 
+						firstcell.getXCoord() == secondCell.getXCoord()) {
+					
+
+					System.out.println("ячейка дл€ 2-палубника: (" + (firstcell.getXCoord() + 1) + ", " + (firstcell.getYCoord() + 1) + ")");
+					System.out.println("ячейка дл€ 2-палубника: (" + (secondCell.getXCoord() + 1) + ", " + (secondCell.getYCoord() + 1) + ")");
+
+					
+					tempBestShots.add(secondCell);
+				}
+			}
+		}
+	}
+	
+
+	public void findBestCoordinates() {
+		randomIndex = new Random().nextInt(tempBestShots.size());
+		xShotCoord = tempBestShots.get(randomIndex).getXCoord();
+		yShotCoord = tempBestShots.get(randomIndex).getYCoord();
+		coordsAreReady = true;
+		tempBestShots.clear();
+	}
 }

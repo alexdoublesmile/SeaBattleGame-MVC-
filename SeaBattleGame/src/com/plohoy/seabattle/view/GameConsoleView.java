@@ -23,7 +23,7 @@ public class GameConsoleView implements GameView{
 	private final String LABEL_CELL = "?";
 	private final String WINNER_MESSAGE = "Поздравляем! Вражеский флот уничтожен! Вы победили!!!";
 	private final String LOOSER_MESSAGE = "Ваш флот уничтожен! Это поражение...";
-	private final String AGAIN_MESSAGE = "Желаете сыграть снова?";
+	private final String AGAIN_MESSAGE = "Желаете сыграть снова?\n -0- Да\n -1- Нет";
 	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
 	private final String NUMBER_EXCEPTION_MESSAGE = "Следует ввести число";
@@ -327,6 +327,12 @@ public class GameConsoleView implements GameView{
 	@Override
 	public void playAgain() {
 		displayConfirmMessage(AGAIN_MESSAGE);
+		while(!(inputAnyString().equals("0") || inputAnyString().equals("1"))) {
+			displayConfirmMessage(TAKE_THE_ONE);
+		}
+		if(inputAnyString().equals("1")) {
+			playAgainAnswer++;
+		}
 		if(playAgainAnswer == 0) {
 			new Launcher().exec();
 		} else {

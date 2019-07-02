@@ -94,6 +94,15 @@ public class Ship {
 		return false;
 	}
 	
+	public boolean checkShipIsShotDown() {
+		for(Cell cell : cells) {
+			if(!cell.checkCellAlive() && this.checkShipAlive()) {
+						return true;
+			}
+		}
+		return false;
+	}
+	
 	public boolean checkShipAlive() {
 		for(Cell cell : cells) {
 			if(cell.checkCellAlive()) {

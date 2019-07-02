@@ -1,10 +1,10 @@
 package com.plohoy.seabattle.model;
 
-import com.plohoy.seabattle.ai.AIModel;
+import com.plohoy.seabattle.ai.AIPlayer;
 
 public class GameModel {
 
-	private AIModel aIShoots;
+	private AIPlayer aIShoots;
 	private Field playerShips;
 	private Field opponentShips;
 	private Shots playerShots;
@@ -36,7 +36,7 @@ public class GameModel {
 		opponentLabels = new Labels();
 	}
 	public void createAI(int power) {
-		aIShoots = new AIModel(power);
+		aIShoots = new AIPlayer(power);
 	}
 	
 	public Field getPlayerShips() {
@@ -63,14 +63,23 @@ public class GameModel {
 		return opponentLabels;
 	}
 
-	public AIModel getAIShoots() {
+	public AIPlayer getAIShoots() {
 		return aIShoots;
 	}
 	
-	public AIModel aIShoots(int fieldSize) {
-		do { aIShoots.aIMakesShot(fieldSize); }
+	public AIPlayer aIShoots(int fieldSize, Shots opponentShots, Field playerShips) {
+		int n = 1;
+		do { 
+			aIShoots.aIMakesShot(fieldSize, opponentShots, playerShips); 
+			System.out.println("----------------------------------------------------------");
+			System.out.println("----------------------------------------------------------");
+			System.out.println(n + " попытка выстрела: (" + (aIShoots.getXShotCoord() + 1) + ", " + (aIShoots.getYShotCoord() + 1) + ") ");
+			n++;
+		}
 		while (opponentShots.shotSamePlace(aIShoots.getXShotCoord(), 
 											aIShoots.getYShotCoord()));
+		System.out.println("координаты выстрела: (" + (aIShoots.getXShotCoord() + 1) + ", " + (aIShoots.getYShotCoord() + 1) + ") ");
+		System.out.println("----------------------------------------------------------");
 		return aIShoots;
 	}
 }

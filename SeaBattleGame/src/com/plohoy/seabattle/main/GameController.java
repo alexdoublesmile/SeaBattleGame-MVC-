@@ -3,6 +3,7 @@ package com.plohoy.seabattle.main;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import com.plohoy.seabattle.ai.AIPlayer;
 import com.plohoy.seabattle.model.*;
 import com.plohoy.seabattle.view.*;
 
@@ -10,16 +11,18 @@ public class GameController {
 	
 	private GameModel theModel;	
 	private GameView theView;
+	private AIPlayer aIShoots;
 	
-	GameController(GameModel theModel, GameView theView, int aIPower) {
+	public GameController(GameModel theModel, GameView theView, int aIPower) {
 				
 			this.theModel = theModel;		
 			this.theView = theView;
-
+			System.out.println("");
 			theModel.createShipsAuto(theView.getBattlefieldSize());
 			theModel.createShots();
 			theModel.createLabels();
 			theModel.createAI(aIPower);
+			
 			theView.viewGame(theModel.getPlayerShips(), theModel.getPlayerShots(), theModel.getPlayerLabels(), 
 					theModel.getOpponentShips(), theModel.getOpponentShots(), theModel.getOpponentLabels());
 			if(this.theView instanceof Game3DView) {
@@ -75,8 +78,9 @@ public class GameController {
 				}
 			}				
 		} else {
-			opponentShoots(theModel.aIShoots(theView.getBattlefieldSize()).getXShotCoord(), 
-							theModel.aIShoots(theView.getBattlefieldSize()).getYShotCoord());
+			
+			aIShoots = theModel.aIShoots(theView.getBattlefieldSize(), theModel.getOpponentShots(), theModel.getPlayerShips());
+			opponentShoots(aIShoots.getXShotCoord(), aIShoots.getYShotCoord());
 			if(this.theView instanceof Game3DView) {
 				((Game3DView) theView).repaintOpponentView();
 				((Game3DView) theView).repaintPlayerView();
@@ -90,14 +94,22 @@ public class GameController {
 	public void opponentShoots(int x, int y) {	
 		theModel.getOpponentShots().add(x, y, true);
 		if (!theModel.getPlayerShips().checkHit(x, y)) {
+			System.out.println("----------------------------------------------------------");
+			System.out.println("----------------- промах ----------------");
+			System.out.println("----------------------------------------------------------");
 			return;
 		} else {
+			aIShoots.setLastCell(new Cell(x, y));
 			if(!theModel.getPlayerShips().checkAnyShipAlive()) {
+				((Game3DView) theView).repaintPlayerView();
 				theView.displayMessage(theView.getLOOSER_MESSAGE());
 				theView.playAgain();
 			} else {
-				opponentShoots(theModel.aIShoots(theView.getBattlefieldSize()).getXShotCoord(), 
-						theModel.aIShoots(theView.getBattlefieldSize()).getYShotCoord());
+				System.out.println("----------------------------------------------------------");
+				System.out.println("----------------- попадание!!! ----------------");
+				System.out.println("----------------------------------------------------------");
+				aIShoots = theModel.aIShoots(theView.getBattlefieldSize(), theModel.getOpponentShots(), theModel.getPlayerShips());
+				opponentShoots(aIShoots.getXShotCoord(), aIShoots.getYShotCoord());
 			}
 		}
 	}

@@ -1,6 +1,7 @@
 package com.plohoy.seabattle.main;
 
 import com.plohoy.seabattle.model.*;
+import com.plohoy.seabattle.player.*;
 import com.plohoy.seabattle.view.*;
 
 public class Launcher {
@@ -16,13 +17,13 @@ public class Launcher {
 		StartView newStartView = new StartView();
 		StartModel newStartModel = new StartModel();
 		
+		
+		
 		GameView theView = newStartModel.viewModeChoose(newStartView.getViewChoice());
 		
 		GameModel theModel = new GameModel();
-		System.out.println("");
 			
 		GameController theController = new GameController(theModel, theView, newStartView.getAIPowerChoice());
-		
 		
 	}
 }

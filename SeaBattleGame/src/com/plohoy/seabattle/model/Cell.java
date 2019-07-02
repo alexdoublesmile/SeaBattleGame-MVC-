@@ -7,7 +7,7 @@ public class Cell {
 	private int xCoord, yCoord;
 	private int cellLife = 1;
 	
-	Cell (int x, int y) {
+	public Cell (int x, int y) {
 		this.xCoord = x;
 		this.yCoord = y;
 	}

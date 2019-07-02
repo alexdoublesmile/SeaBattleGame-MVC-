@@ -8,7 +8,7 @@ public class Field {
 	private int[] pattern = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 	private Random random;
 
-	Field() {	
+	public Field() {	
 	}
 	
 	public void setShipsAuto(int fieldSize) {

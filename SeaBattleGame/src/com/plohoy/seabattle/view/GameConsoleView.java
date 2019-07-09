@@ -2,28 +2,41 @@ package com.plohoy.seabattle.view;
 
 import java.util.Scanner;
 
+import com.plohoy.seabattle.interfaces.Player;
+import com.plohoy.seabattle.interfaces.View;
 import com.plohoy.seabattle.main.Launcher;
-import com.plohoy.seabattle.model.*;
+import com.plohoy.seabattle.model.Cell;
+import com.plohoy.seabattle.model.Field;
+import com.plohoy.seabattle.model.Label;
+import com.plohoy.seabattle.model.Labels;
+import com.plohoy.seabattle.model.Ship;
+import com.plohoy.seabattle.model.Shot;
+import com.plohoy.seabattle.model.Shots;
 
-public class GameConsoleView implements GameView{
+public class GameConsoleView implements View {
 
-	private int battlefieldSize = 10;
-	private int xShotCoord;
-	private int yShotCoord;
+//	private int battlefieldSize = 10;
+	private int xShotCoord = Player.FIELD_SIZE + 1;
+	private int yShotCoord = Player.FIELD_SIZE + 1;
+
+	private String playerName;
+	private String opponentName;
 	private int playAgainAnswer;
 	private int num;
 
-	private int [] battleFieldLegend;
-	private String [][] playerBattleField;
-	private String [][] opponentBattleField;
+	private int[] battleFieldLegend;
+	private String[][] playerBattleField;
+	private String[][] opponentBattleField;
 	private final String LIVE_CELL = "O";
 	private final String WOUNDED_CELL = "%";
 	private final String DEAD_CELL = "X";
 	private final String SHOT_CELL = "*";
 	private final String LABEL_CELL = "?";
-	private final String WINNER_MESSAGE = "Поздравляем! Вражеский флот уничтожен! Вы победили!!!";
-	private final String LOOSER_MESSAGE = "Ваш флот уничтожен! Это поражение...";
+	private final String START_MESSAGE = "Битва начинается!.\n По результатам жеребьевки первым стреляет ";
+	private final String WINNER_MESSAGE = "Флот уничтожен! \n В этой славной битве побеждает ";
+	private final String LOOSER_MESSAGE = "Ваш флот уничтожен! Это поражение... \n Сегодня Искусственный Интеллект оказался умнее Вас.";
 	private final String AGAIN_MESSAGE = "Желаете сыграть снова?\n -0- Да\n -1- Нет";
+	private final String NEXT_PLAYER_TURN_MESSAGE = "Переход хода.\n Ходит ";
 	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
 	private final String NUMBER_EXCEPTION_MESSAGE = "Следует ввести число";
@@ -36,130 +49,133 @@ public class GameConsoleView implements GameView{
 	private final String INCORRECT_COORD = "Введите, пожалуйста подходящие координаты";
 	private final String LABEL_XCOORD_ENTER = "тут можно будет ввести метку, но не сегодня..";
 	private final String MAKE_YOUR_SHOT = "Делайте Ваш выстрел!";
-	
+
 	private Field playerShips;
-	private Field opponentShips;	
+	private Field opponentShips;
 	private Shots playerShots;
-	private Shots opponentShots;	
+	private Shots opponentShots;
 	private Labels playerLabels;
-	private Labels opponentLabels;	
+	private Labels opponentLabels;
 	private Scanner scan;
-	
+
 	public GameConsoleView() {
 //		battleFieldLegend = new String[] {"A","B","C","D","E","F","G","H","I","J"};
-		battleFieldLegend = new int[battlefieldSize];
-		playerBattleField = new String[battlefieldSize][battlefieldSize];
-		opponentBattleField = new String[battlefieldSize][battlefieldSize];
-		
-		for(int x = 0; x < battlefieldSize; x++) {
+
+		battleFieldLegend = new int[Player.FIELD_SIZE];
+		playerBattleField = new String[Player.FIELD_SIZE][Player.FIELD_SIZE];
+		opponentBattleField = new String[Player.FIELD_SIZE][Player.FIELD_SIZE];
+
+		for (int x = 0; x < Player.FIELD_SIZE; x++) {
 			battleFieldLegend[x] = x + 1;
 		}
-		
-		for(int y = 0; y < battlefieldSize; y++) {
-			for(int x = 0; x < battlefieldSize; x++) {
+
+		for (int y = 0; y < Player.FIELD_SIZE; y++) {
+			for (int x = 0; x < Player.FIELD_SIZE; x++) {
 				playerBattleField[x][y] = " ";
 			}
 		}
-		
-		for(int y = 0; y < battlefieldSize; y++) {
-			for(int x = 0; x < battlefieldSize; x++) {
+
+		for (int y = 0; y < Player.FIELD_SIZE; y++) {
+			for (int x = 0; x < Player.FIELD_SIZE; x++) {
 				opponentBattleField[x][y] = " ";
 			}
-		}	
+		}
 	}
-	
+
 	@Override
-	public void viewGame(Field playerField, Shots playerShots, Labels playerLabels, 
-			Field opponentField, Shots opponentShots, Labels opponentLabels) {
-		
+	public void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField,
+			Shots opponentShots, Labels opponentLabels, String playerName, String opponentName) {
+
+		this.playerName = playerName;
+		this.opponentName = opponentName;
 		playerShips = playerField;
 		this.playerShots = playerShots;
 		this.playerLabels = playerLabels;
 		opponentShips = opponentField;
 		this.opponentShots = opponentShots;
-		this.opponentLabels = opponentLabels;		
+		this.opponentLabels = opponentLabels;
 
 		paintPlayerView();
-		paintOpponentView();	
+		paintOpponentView();
 	}
 
 	public void paintPlayerView() {
 		System.out.println("");
-		System.out.println("--- My field ---");
-		
-		drawShots(playerBattleField, opponentShots );
-		
+		System.out.println("--- " + playerName + " ---");
+
+		drawShots(playerBattleField, opponentShots);
+
 		drawShips(playerBattleField, playerShips, true);
 		drawBackground(playerBattleField);
 	}
-	
+
 	public void paintOpponentView() {
 		System.out.println("");
-		System.out.println("--- Opponent field ---");
+		System.out.println("--- " + opponentName + " ---");
 		drawShots(opponentBattleField, playerShots);
 		drawShips(opponentBattleField, opponentShips, false);
 //		drawLabels(playerLabels);
 		drawBackground(opponentBattleField);
 	}
-	
+
 	public void drawShips(String[][] field, Field ships, boolean isVisible) {
-		for(Ship ship : ships.getBattleField()) {
-			if(ship.checkShipAlive()) {
-				for(Cell cell : ship.getCells()) {
-					if(isVisible) {
+		for (Ship ship : ships.getBattleField()) {
+			if (ship.checkShipAlive()) {
+				for (Cell cell : ship.getCells()) {
+					if (isVisible) {
 						drawTheCell(field, cell, LIVE_CELL);
 					}
-					if(!cell.checkCellAlive()) {
+					if (!cell.checkCellAlive()) {
 						drawTheCell(field, cell, WOUNDED_CELL);
-					} 
+					}
 				}
 			} else {
-				for(Cell cell : ship.getCells()) {
+				for (Cell cell : ship.getCells()) {
 					drawTheCell(field, cell, DEAD_CELL);
-				}				
-			}			
+				}
+			}
 		}
 	}
-	
+
 	public void drawTheCell(String[][] field, Cell cell, String typeOfCell) {
-		field[cell.getXCoord()][cell.getYCoord()] = typeOfCell;	
+		field[cell.getXCoord()][cell.getYCoord()] = typeOfCell;
 	}
-	
+
 	public void drawShots(String[][] field, Shots shots) {
-		for(Shot shot : shots.getShots()) {
+		for (Shot shot : shots.getShots()) {
 			drawTheShot(field, shot);
 		}
 	}
-	
+
 	public void drawTheShot(String[][] field, Shot shot) {
-		field[shot.getXCoord()][shot.getYCoord()] = SHOT_CELL;	
+		field[shot.getXCoord()][shot.getYCoord()] = SHOT_CELL;
 	}
 
 	public void drawLabels(Labels labels) {
-		for(Label label : labels.getLabels()) {
+		for (Label label : labels.getLabels()) {
 			drawTheLabel(label);
 		}
 	}
-	
+
 	public void drawTheLabel(Label label) {
-		opponentBattleField[label.getXCoord()][label.getYCoord()] = LABEL_CELL;	
+		opponentBattleField[label.getXCoord()][label.getYCoord()] = LABEL_CELL;
 	}
-	
+
 	public void drawBackground(String[][] field) {
 		drawLegend();
 		resetNum();
 		System.out.println();
-		for(int y = 0; y < battlefieldSize; y++) {
-			if(y < 9) {
+		for (int y = 0; y < Player.FIELD_SIZE; y++) {
+			if (y < 9) {
 				System.out.print(" ");
 			}
 			System.out.print(num++ + "|");
-			for(int x = 0; x < battlefieldSize; x++) {
+			for (int x = 0; x < Player.FIELD_SIZE; x++) {
 				System.out.print(" ");
 				System.out.print(field[x][y] + "  ");
 			}
 			System.out.println("|");
-			if(y < battlefieldSize - 1) {
+			if (y < Player.FIELD_SIZE - 1) {
 				System.out.println("");
 			}
 		}
@@ -169,25 +185,25 @@ public class GameConsoleView implements GameView{
 
 	public void drawLegend() {
 		System.out.print(" ");
-		for(int x = 0; x < battlefieldSize; x++) {
-			if(x < 10) {
+		for (int x = 0; x < Player.FIELD_SIZE; x++) {
+			if (x < 10) {
 				System.out.print(" ");
 			}
 			System.out.print("  ");
-			System.out.print(battleFieldLegend [x]);
-		}	
+			System.out.print(battleFieldLegend[x]);
+		}
 		System.out.println("");
 		drawBottomBorder();
 	}
-	
+
 	public void drawBottomBorder() {
 		System.out.print("   ");
-		for(int i = 0; i < battlefieldSize * 2; i++) {
+		for (int i = 0; i < Player.FIELD_SIZE * 2; i++) {
 			System.out.print("--");
 		}
 	}
-	
-	public void makeShot() {
+
+//	public void inputTheShot() {
 //		System.out.println(MAKE_CHOICE);
 //		if(makeChoice() == 1) {
 //			System.out.println(MAKE_YOUR_SHOT);
@@ -198,33 +214,27 @@ public class GameConsoleView implements GameView{
 //		} else {
 //			System.out.println(LABEL_XCOORD_ENTER);
 //		}
-		System.out.println(MAKE_YOUR_SHOT);
-		System.out.println(XCOORD_ENTER);
-		setXShotCoord(inputAnyString());
-		System.out.println(YCOORD_ENTER);
-		setYShotCoord(inputAnyString());
-	}
-	
+//	}
+
 	public int makeChoice() {
 		String s;
 		System.out.println(TAKE_THE_SHOT);
 		System.out.println(TAKE_THE_LABEL);
 		do {
 			System.out.println(TAKE_THE_ONE);
-			s = inputAnyString();	
-		}
-		while(!(s.equals("1") || s.equals("2")));
+			s = inputAnyString();
+		} while (!(s.equals("1") || s.equals("2")));
 		return Integer.parseInt(s);
 	}
-	
+
 	public void setXShotCoord(String s) {
 		try {
 			xShotCoord = Integer.parseInt(s) - 1;
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			displayMessage(NUMBER_EXCEPTION_MESSAGE);
 			setXShotCoord(inputAnyString());
 		}
-		if((xShotCoord + 1) < 1 || (xShotCoord + 1) > battlefieldSize) {
+		if ((xShotCoord + 1) < 1 || (xShotCoord + 1) > Player.FIELD_SIZE) {
 			displayMessage(INCORRECT_COORD);
 			setXShotCoord(inputAnyString());
 		}
@@ -233,11 +243,11 @@ public class GameConsoleView implements GameView{
 	public void setYShotCoord(String s) {
 		try {
 			yShotCoord = Integer.parseInt(s) - 1;
-		} catch(NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			displayMessage(NUMBER_EXCEPTION_MESSAGE);
 			setYShotCoord(inputAnyString());
 		}
-		if((yShotCoord + 1) < 1 || (yShotCoord + 1) > battlefieldSize) {
+		if ((yShotCoord + 1) < 1 || (yShotCoord + 1) > Player.FIELD_SIZE) {
 			displayMessage(INCORRECT_COORD);
 			setYShotCoord(inputAnyString());
 		}
@@ -253,16 +263,16 @@ public class GameConsoleView implements GameView{
 		return yShotCoord;
 	}
 
-	@Override
-	public void setBattlefieldSize(int battlefieldSize) {
-		this.battlefieldSize = battlefieldSize; 
-		
-	}
-
-	@Override
-	public int getBattlefieldSize() {
-		return battlefieldSize;
-	}
+//	@Override
+//	public void setBattlefieldSize(int battlefieldSize) {
+//		this.battlefieldSize = battlefieldSize;
+//
+//	}
+//
+//	@Override
+//	public int getBattlefieldSize() {
+//		return battlefieldSize;
+//	}
 
 	@Override
 	public int getPlayAgainAnswer() {
@@ -271,14 +281,14 @@ public class GameConsoleView implements GameView{
 
 	@Override
 	public void displayConfirmMessage(String message) {
-		System.out.println(message);		
-		
+		System.out.println(message);
+
 	}
-	
+
 	@Override
 	public void displayMessage(String message) {
-		System.out.println(message);		
-		
+		System.out.println(message);
+
 	}
 
 	@Override
@@ -302,42 +312,149 @@ public class GameConsoleView implements GameView{
 	}
 
 	@Override
-	public String getWINNER_MESSAGE() {
-		return WINNER_MESSAGE;
+	public String getNEXT_PLAYER_TURN_MESSAGE(String playerName) {
+		String s = NEXT_PLAYER_TURN_MESSAGE + playerName;
+		return s;
 	}
-	
+
 	public void resetNum() {
-		this.num = 1;		
+		this.num = 1;
 	}
-	
+
 	public Scanner getScanner() {
-		  scan = new Scanner(System.in);
-		  return scan;
-		}
-	
-	public String inputAnyString() {
-	  String s = getScanner().nextLine();
-	  return s;
+		scan = new Scanner(System.in);
+		return scan;
 	}
-		
+
+	public String inputAnyString() {
+		String s = getScanner().nextLine();
+		return s;
+	}
+
 	public void closeScanner() {
 		getScanner().close();
 	}
-	
+
 	@Override
 	public void playAgain() {
 		displayConfirmMessage(AGAIN_MESSAGE);
-		while(!(inputAnyString().equals("0") || inputAnyString().equals("1"))) {
+		while (!(inputAnyString().equals("0") || inputAnyString().equals("1"))) {
 			displayConfirmMessage(TAKE_THE_ONE);
 		}
-		if(inputAnyString().equals("1")) {
+		if (inputAnyString().equals("1")) {
 			playAgainAnswer++;
 		}
-		if(playAgainAnswer == 0) {
+		if (playAgainAnswer == 0) {
 			new Launcher().exec();
 		} else {
 			closeScanner();
 			System.exit(0);
 		}
+	}
+
+	@Override
+	public void setScoreLabel(String scoreLabel) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public String getScoreLabel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void repaintView(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField,
+			Shots opponentShots, Labels opponentLabels) {
+		viewGame(playerField, playerShots, playerLabels, opponentField, opponentShots, opponentLabels, playerName,
+				opponentName);
+
+	}
+
+	@Override
+	public void setShotCoords() {
+
+		System.out.println(MAKE_YOUR_SHOT);
+		System.out.println(XCOORD_ENTER);
+		setXShotCoord(inputAnyString());
+		System.out.println(YCOORD_ENTER);
+		setYShotCoord(inputAnyString());
+
+	}
+
+	@Override
+	public void setVisible() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setInvisible() {
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+		System.out.println("-------------------------------------------------------------------------");
+
+	}
+
+	@Override
+	public boolean shotIsDone() {
+		if (xShotCoord < Player.FIELD_SIZE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void resetShotCoords() {
+
+		xShotCoord = Player.FIELD_SIZE + 1;
+		yShotCoord = Player.FIELD_SIZE + 1;
+
+	}
+
+	@Override
+	public String getSTART_MESSAGE(String playerName) {
+		String s = START_MESSAGE + playerName;
+		return s;
+	}
+
+	@Override
+	public String getWINNER_MESSAGE(String playerName) {
+		String s = WINNER_MESSAGE + playerName;
+		return s;
 	}
 }

@@ -31,24 +31,15 @@ import com.plohoy.seabattle.model.Shots;
 @SuppressWarnings("serial")
 public class Game3DView extends JFrame implements View {
 
-//	private int battlefieldSize = 10;
-	private int xShotCoord = Player.FIELD_SIZE + 1;
-	private int yShotCoord = Player.FIELD_SIZE + 1;
-	private int xPressCoord;
-	private int yPressCoord;
-	private boolean mouseLeftButtonIsPressed = false;
-
 	private final int FIELD_PX_SIZE = 300;
 	private final int CELL_PX_SIZE = FIELD_PX_SIZE / Player.FIELD_SIZE;
 	private final int SHADOW_OFFSET_FACTOR = CELL_PX_SIZE / 30;
 	private final float LINE_FACTOR = CELL_PX_SIZE / 28f;
 	private final float LINE_OFFSET_FACTOR = CELL_PX_SIZE * 0.15f;
-
 	private final int WINDOW_WIDTH = 900;
 	private final int WINDOW_HEIGHT = 400;
 	private final int MOUSE_BUTTON_LEFT = 1;
 	private final int MOUSE_BUTTON_RIGHT = 3;
-
 	private final String TITLE = "Морской Бой c Искусственным Интеллектом";
 	private final String START_MESSAGE = "Битва начинается!.\n По результатам жеребьевки первым стреляет ";
 	private final String WINNER_MESSAGE = "Флот уничтожен! \n В этой славной битве побеждает ";
@@ -56,7 +47,20 @@ public class Game3DView extends JFrame implements View {
 	private final String AGAIN_MESSAGE = "Может быть желаете сыграть еще разок?";
 	private final String NEXT_PLAYER_TURN_MESSAGE = "Переход хода.\n Ходит ";
 	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
+	private final String ARRANGE_YOUR_SHIPS = "Выберите клетки, в которых будут стоять Ваши корабли";
+	private final String CELL_SHOULD_BE_NEW = "Вы уже, кажется, выбирали эту клетку..";
+	private final String LAST_SHIP_IS_EXCESS_MESSAGE = "Вы не можете выбрать эту клетку, т.к. последний корабль не соответствует правилам.\n Создать можно только: \n 4 - однопалубных шлюпки \n 3 - двухпалубных брига \n 2 - трехпалубных корвета \n и один четырехпалубный фрегат";
+	private final String SHIP_IS_EXCESS_MESSAGE = "Создаваемый корабль не соответствует правилам: он слишком велик.\n Создать можно только: \n 4 - однопалубных шлюпки \n 3 - двухпалубных брига \n 2 - трехпалубных корвета \n и один четырехпалубный фрегат";
+	private final String CELL_SHOULD_NOT_TOUCH_SHIP = "Корабли должны быть прямыми и не должны касаться друг друга вообще-то..";
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
+
+	private int xShotCoord = Player.FIELD_SIZE + 1;
+	private int yShotCoord = Player.FIELD_SIZE + 1;
+	private int manuallyXCoord = Player.FIELD_SIZE + 1;
+	private int manuallyYCoord = Player.FIELD_SIZE + 1;
+	private MouseEvent mouseClick;
+
+	private boolean mouseLeftButtonIsPressed = false;
 	private int playAgainAnswer;
 	private String scoreLabel = "0";
 
@@ -64,15 +68,6 @@ public class Game3DView extends JFrame implements View {
 	private BattleFieldOpponentPanel opponentBattleFieldPanel;
 	private JPanel middlePanel;
 	private JLabel scorePanel = new JLabel("Кол-во ходов: " + scoreLabel);
-//	private JTextField scoreField = new JTextField(3);
-//
-//	public JTextField getScoreField() {
-//		return scoreField;
-//	}
-//
-//	public void setScoreField(JTextField scoreField) {
-//		this.scoreField = scoreField;
-//	}
 
 	private Field playerShips;
 	private Field opponentShips;
@@ -117,16 +112,10 @@ public class Game3DView extends JFrame implements View {
 				super.mouseReleased(e);
 
 				if (e.getButton() == MOUSE_BUTTON_LEFT) {
-					System.out.println("mouseLeftButtonIsPressed: " + mouseLeftButtonIsPressed);
-					System.out.println("xPressCoord: " + xPressCoord);
-					System.out.println("yPressCoord: " + yPressCoord);
-					xPressCoord = e.getX() / CELL_PX_SIZE;
-					yPressCoord = e.getY() / CELL_PX_SIZE;
+					mouseClick = e;
+					System.out.println("мышь нажимается..");
 					mouseLeftButtonIsPressed = true;
-					System.out.println("нажимается  левая кнопка");
-					System.out.println("mouseLeftButtonIsPressed: " + mouseLeftButtonIsPressed);
-					System.out.println("xPressCoord: " + xPressCoord);
-					System.out.println("yPressCoord: " + yPressCoord);
+
 				}
 				if (e.getButton() == MOUSE_BUTTON_RIGHT) {
 					System.out.println("click mouse right-button");
@@ -134,8 +123,22 @@ public class Game3DView extends JFrame implements View {
 			}
 		});
 
-		xPressCoord = Player.FIELD_SIZE + 1;
-		yPressCoord = Player.FIELD_SIZE + 1;
+//		playerBattleFieldPanel.addMouseListener(new MouseAdapter() {
+//			@Override
+//			public void mouseReleased(MouseEvent e) {
+//				super.mouseReleased(e);
+//
+//				if (e.getButton() == MOUSE_BUTTON_LEFT) {
+//					mouseClick = e;
+//					System.out.println("мышь нажимается..");
+//					mouseLeftButtonIsPressed = true;
+//
+//				}
+//				if (e.getButton() == MOUSE_BUTTON_RIGHT) {
+//					System.out.println("click mouse right-button");
+//				}
+//			}
+//		});
 	}
 
 	public void createPlayerPanel() {
@@ -155,7 +158,7 @@ public class Game3DView extends JFrame implements View {
 	public void createMiddlePanel() {
 		middlePanel = new JPanel();
 		middlePanel.setBackground(Color.white);
-		middlePanel.add(scorePanel);
+		// middlePanel.add(scorePanel);
 	}
 
 	class BattleFieldPlayerPanel extends JPanel {
@@ -166,7 +169,9 @@ public class Game3DView extends JFrame implements View {
 			g2.setColor(Color.lightGray);
 			drawBackground(g2);
 			drawShots(g2, opponentShots);
-			drawShips(g2, playerShips, true);
+			if (!(playerShips == null)) {
+				drawShips(g2, playerShips, true);
+			}
 		}
 	}
 
@@ -178,7 +183,9 @@ public class Game3DView extends JFrame implements View {
 			g2.setColor(Color.lightGray);
 			drawBackground(g2);
 			drawShots(g2, playerShots);
-			drawShips(g2, opponentShips, false);
+			if (!(opponentShips == null)) {
+				drawShips(g2, opponentShips, false);
+			}
 		}
 	}
 
@@ -294,8 +301,38 @@ public class Game3DView extends JFrame implements View {
 		middlePanel.repaint();
 	}
 
-	public int getCELL_PX_SIZE() {
-		return CELL_PX_SIZE;
+	@Override
+	public void playAgain() {
+		displayConfirmMessage(AGAIN_MESSAGE);
+		if (playAgainAnswer == 0) {
+			setInvisible();
+			new Launcher().exec();
+		} else {
+			System.exit(0);
+		}
+	}
+
+	public void addClickingListener(MouseListener listenForClicking) {
+
+		playerBattleFieldPanel.addMouseListener(listenForClicking);
+	}
+
+	@Override
+	public boolean shotIsDone() {
+		if (xShotCoord < Player.FIELD_SIZE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean clickIsDone() {
+		if (manuallyXCoord < Player.FIELD_SIZE) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -312,15 +349,40 @@ public class Game3DView extends JFrame implements View {
 				JOptionPane.PLAIN_MESSAGE, null, answers, answers[1]);
 	}
 
-//	@Override
-//	public int getBattlefieldSize() {
-//		return battlefieldSize;
-//	}
-//
-//	@Override
-//	public void setBattlefieldSize(int battlefieldSize) {
-//		this.battlefieldSize = battlefieldSize;
-//	}
+	@Override
+	public void setManuallyCoords() {
+		if (mouseLeftButtonIsPressed) {
+			manuallyXCoord = mouseClick.getX() / CELL_PX_SIZE;
+			manuallyYCoord = mouseClick.getY() / CELL_PX_SIZE;
+			mouseLeftButtonIsPressed = false;
+		}
+	}
+
+	public int getCELL_PX_SIZE() {
+		return CELL_PX_SIZE;
+	}
+
+	@Override
+	public void resetManuallyCoords() {
+
+		manuallyXCoord = Player.FIELD_SIZE + 1;
+		manuallyYCoord = Player.FIELD_SIZE + 1;
+	}
+
+	@Override
+	public void setShotCoords() {
+		if (mouseLeftButtonIsPressed) {
+			xShotCoord = mouseClick.getX() / CELL_PX_SIZE;
+			yShotCoord = mouseClick.getY() / CELL_PX_SIZE;
+			mouseLeftButtonIsPressed = false;
+		}
+	}
+
+	@Override
+	public void resetShotCoords() {
+		xShotCoord = Player.FIELD_SIZE + 1;
+		yShotCoord = Player.FIELD_SIZE + 1;
+	}
 
 	@Override
 	public String getWINNER_MESSAGE(String playerName) {
@@ -361,6 +423,31 @@ public class Game3DView extends JFrame implements View {
 	}
 
 	@Override
+	public String getARRANGE_YOUR_SHIPS() {
+		return ARRANGE_YOUR_SHIPS;
+	}
+
+	@Override
+	public String getCELL_SHOULD_BE_NEW() {
+		return CELL_SHOULD_BE_NEW;
+	}
+
+	@Override
+	public String getSHIP_IS_EXCESS_MESSAGE() {
+		return SHIP_IS_EXCESS_MESSAGE;
+	}
+
+	@Override
+	public String getCELL_SHOULD_NOT_TOUCH_SHIP() {
+		return CELL_SHOULD_NOT_TOUCH_SHIP;
+	}
+
+	@Override
+	public String getLAST_SHIP_IS_EXCESS_MESSAGE() {
+		return LAST_SHIP_IS_EXCESS_MESSAGE;
+	}
+
+	@Override
 	public int getPlayAgainAnswer() {
 		return playAgainAnswer;
 	}
@@ -375,14 +462,6 @@ public class Game3DView extends JFrame implements View {
 		return yShotCoord;
 	}
 
-	public void setXShotCoord(int xShotCoord) {
-		this.xShotCoord = xShotCoord;
-	}
-
-	public void setYShotCoord(int yShotCoord) {
-		this.yShotCoord = yShotCoord;
-	}
-
 	public int checkIsItShot() {
 		return MOUSE_BUTTON_LEFT;
 	}
@@ -391,20 +470,14 @@ public class Game3DView extends JFrame implements View {
 		return MOUSE_BUTTON_RIGHT;
 	}
 
-	public int getxPressCoord() {
-		return xPressCoord;
+	@Override
+	public int getManuallyXCoord() {
+		return manuallyXCoord;
 	}
 
-	public void setxPressCoord(int xPressCoord) {
-		this.xPressCoord = xPressCoord;
-	}
-
-	public int getyPressCoord() {
-		return yPressCoord;
-	}
-
-	public void setyPressCoord(int yPressCoord) {
-		this.yPressCoord = yPressCoord;
+	@Override
+	public int getManuallyYCoord() {
+		return manuallyYCoord;
 	}
 
 	@Override
@@ -427,38 +500,11 @@ public class Game3DView extends JFrame implements View {
 		this.scoreLabel = scoreLabel;
 	}
 
-	@Override
-	public void playAgain() {
-		displayConfirmMessage(AGAIN_MESSAGE);
-		if (playAgainAnswer == 0) {
-			setInvisible();
-			new Launcher().exec();
-		} else {
-			System.exit(0);
-		}
+	public int getMOUSE_BUTTON_LEFT() {
+		return MOUSE_BUTTON_LEFT;
 	}
 
-	@Override
-	public void setShotCoords() {
-		if (mouseLeftButtonIsPressed) {
-			xShotCoord = xPressCoord;
-			yShotCoord = yPressCoord;
-			mouseLeftButtonIsPressed = false;
-		}
-	}
-
-	@Override
-	public void resetShotCoords() {
-		xShotCoord = Player.FIELD_SIZE + 1;
-		yShotCoord = Player.FIELD_SIZE + 1;
-	}
-
-	@Override
-	public boolean shotIsDone() {
-		if (xShotCoord < Player.FIELD_SIZE) {
-			return true;
-		} else {
-			return false;
-		}
+	public int getMOUSE_BUTTON_RIGHT() {
+		return MOUSE_BUTTON_RIGHT;
 	}
 }

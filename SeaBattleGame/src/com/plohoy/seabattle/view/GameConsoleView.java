@@ -15,15 +15,6 @@ import com.plohoy.seabattle.model.Shots;
 
 public class GameConsoleView implements View {
 
-//	private int battlefieldSize = 10;
-	private int xShotCoord = Player.FIELD_SIZE + 1;
-	private int yShotCoord = Player.FIELD_SIZE + 1;
-
-	private String playerName;
-	private String opponentName;
-	private int playAgainAnswer;
-	private int num;
-
 	private int[] battleFieldLegend;
 	private String[][] playerBattleField;
 	private String[][] opponentBattleField;
@@ -39,6 +30,11 @@ public class GameConsoleView implements View {
 	private final String NEXT_PLAYER_TURN_MESSAGE = "Переход хода.\n Ходит ";
 	private final String REPEAT_SHOT_MESSAGE = "Вы сюда уже стреляли. Есть смысл выстрелить в другое место..";
 	private final String SINK_THE_SHIP_MESSAGE = "Вы потопили вражеский корабль!";
+	private final String ARRANGE_YOUR_SHIPS = "Выберите клетки, в которых будут стоять Ваши корабли";
+	private final String CELL_SHOULD_BE_NEW = "Вы уже, кажется, выбирали эту клетку..";
+	private final String CELL_SHOULD_NOT_TOUCH_SHIP = "Корабли должны быть прямыми и не должны касаться друг друга вообще-то..";
+	private final String LAST_SHIP_IS_EXCESS_MESSAGE = "Вы не можете выбрать эту клетку, т.к. последний корабль не соответствует правилам.\n Создать можно только: \n 4 - однопалубных шлюпки \n 3 - двухпалубных брига \n 2 - трехпалубных корвета \n и один четырехпалубный фрегат";
+	private final String SHIP_IS_EXCESS_MESSAGE = "Создаваемый корабль не соответствует правилам: он слишком велик.\n Создать можно только: \n 4 - однопалубных шлюпки \n 3 - двухпалубных брига \n 2 - трехпалубных корвета \n и один четырехпалубный фрегат";
 	private final String NUMBER_EXCEPTION_MESSAGE = "Следует ввести число";
 	private final String MAKE_CHOICE = "Выберите действие:";
 	private final String TAKE_THE_SHOT = "1. Я буду стрелять";
@@ -57,6 +53,16 @@ public class GameConsoleView implements View {
 	private Labels playerLabels;
 	private Labels opponentLabels;
 	private Scanner scan;
+
+	private int xShotCoord = Player.FIELD_SIZE + 1;
+	private int yShotCoord = Player.FIELD_SIZE + 1;
+	private int manuallyXCoord;
+	private int manuallyYCoord;
+
+	private String playerName;
+	private String opponentName;
+	private int playAgainAnswer;
+	private int num;
 
 	public GameConsoleView() {
 //		battleFieldLegend = new String[] {"A","B","C","D","E","F","G","H","I","J"};
@@ -104,8 +110,9 @@ public class GameConsoleView implements View {
 		System.out.println("--- " + playerName + " ---");
 
 		drawShots(playerBattleField, opponentShots);
-
-		drawShips(playerBattleField, playerShips, true);
+		if (!(playerShips == null)) {
+			drawShips(playerBattleField, playerShips, true);
+		}
 		drawBackground(playerBattleField);
 	}
 
@@ -113,7 +120,9 @@ public class GameConsoleView implements View {
 		System.out.println("");
 		System.out.println("--- " + opponentName + " ---");
 		drawShots(opponentBattleField, playerShots);
-		drawShips(opponentBattleField, opponentShips, false);
+		if (!(opponentShips == null)) {
+			drawShips(opponentBattleField, opponentShips, false);
+		}
 //		drawLabels(playerLabels);
 		drawBackground(opponentBattleField);
 	}
@@ -203,19 +212,6 @@ public class GameConsoleView implements View {
 		}
 	}
 
-//	public void inputTheShot() {
-//		System.out.println(MAKE_CHOICE);
-//		if(makeChoice() == 1) {
-//			System.out.println(MAKE_YOUR_SHOT);
-//			System.out.println(XCOORD_ENTER);
-//			setXShotCoord(inputAnyString());
-//			System.out.println(YCOORD_ENTER);
-//			setYShotCoord(inputAnyString());
-//		} else {
-//			System.out.println(LABEL_XCOORD_ENTER);
-//		}
-//	}
-
 	public int makeChoice() {
 		String s;
 		System.out.println(TAKE_THE_SHOT);
@@ -253,6 +249,45 @@ public class GameConsoleView implements View {
 		}
 	}
 
+	public void setManuallyXCoord(String s) {
+		try {
+			manuallyXCoord = Integer.parseInt(s) - 1;
+		} catch (NumberFormatException e) {
+			displayMessage(NUMBER_EXCEPTION_MESSAGE);
+			setManuallyXCoord(inputAnyString());
+		}
+		if ((manuallyXCoord + 1) < 1 || (manuallyXCoord + 1) > Player.FIELD_SIZE) {
+			displayMessage(INCORRECT_COORD);
+			setManuallyXCoord(inputAnyString());
+		}
+	}
+
+	public void setManuallyYCoord(String s) {
+		try {
+			manuallyYCoord = Integer.parseInt(s) - 1;
+		} catch (NumberFormatException e) {
+			displayMessage(NUMBER_EXCEPTION_MESSAGE);
+			setManuallyYCoord(inputAnyString());
+		}
+		if ((manuallyYCoord + 1) < 1 || (manuallyYCoord + 1) > Player.FIELD_SIZE) {
+			displayMessage(INCORRECT_COORD);
+			setManuallyYCoord(inputAnyString());
+		}
+	}
+
+	public void setAnyCoord(int someCoord, String someString) {
+		try {
+			someCoord = Integer.parseInt(someString) - 1;
+		} catch (NumberFormatException e) {
+			displayMessage(NUMBER_EXCEPTION_MESSAGE);
+			setAnyCoord(someCoord, inputAnyString());
+		}
+		if ((someCoord + 1) < 1 || (someCoord + 1) > Player.FIELD_SIZE) {
+			displayMessage(INCORRECT_COORD);
+			setAnyCoord(someCoord, inputAnyString());
+		}
+	}
+
 	@Override
 	public int getXShotCoord() {
 		return xShotCoord;
@@ -262,17 +297,6 @@ public class GameConsoleView implements View {
 	public int getYShotCoord() {
 		return yShotCoord;
 	}
-
-//	@Override
-//	public void setBattlefieldSize(int battlefieldSize) {
-//		this.battlefieldSize = battlefieldSize;
-//
-//	}
-//
-//	@Override
-//	public int getBattlefieldSize() {
-//		return battlefieldSize;
-//	}
 
 	@Override
 	public int getPlayAgainAnswer() {
@@ -289,6 +313,11 @@ public class GameConsoleView implements View {
 	public void displayMessage(String message) {
 		System.out.println(message);
 
+	}
+
+	@Override
+	public String getARRANGE_YOUR_SHIPS() {
+		return ARRANGE_YOUR_SHIPS;
 	}
 
 	@Override
@@ -315,6 +344,11 @@ public class GameConsoleView implements View {
 	public String getNEXT_PLAYER_TURN_MESSAGE(String playerName) {
 		String s = NEXT_PLAYER_TURN_MESSAGE + playerName;
 		return s;
+	}
+
+	@Override
+	public String getSHIP_IS_EXCESS_MESSAGE() {
+		return SHIP_IS_EXCESS_MESSAGE;
 	}
 
 	public void resetNum() {
@@ -456,5 +490,55 @@ public class GameConsoleView implements View {
 	public String getWINNER_MESSAGE(String playerName) {
 		String s = WINNER_MESSAGE + playerName;
 		return s;
+	}
+
+	@Override
+	public String getCELL_SHOULD_NOT_TOUCH_SHIP() {
+		return CELL_SHOULD_NOT_TOUCH_SHIP;
+	}
+
+	@Override
+	public int getManuallyXCoord() {
+		return manuallyXCoord;
+	}
+
+	@Override
+	public int getManuallyYCoord() {
+		return manuallyYCoord;
+	}
+
+	@Override
+	public void setManuallyCoords() {
+
+		System.out.println(XCOORD_ENTER);
+		setManuallyXCoord(inputAnyString());
+		System.out.println(YCOORD_ENTER);
+		setManuallyYCoord(inputAnyString());
+	}
+
+	@Override
+	public void resetManuallyCoords() {
+
+		manuallyXCoord = Player.FIELD_SIZE + 1;
+		manuallyYCoord = Player.FIELD_SIZE + 1;
+	}
+
+	@Override
+	public boolean clickIsDone() {
+		if (manuallyXCoord < Player.FIELD_SIZE) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public String getCELL_SHOULD_BE_NEW() {
+		return CELL_SHOULD_BE_NEW;
+	}
+
+	@Override
+	public String getLAST_SHIP_IS_EXCESS_MESSAGE() {
+		return LAST_SHIP_IS_EXCESS_MESSAGE;
 	}
 }

@@ -14,31 +14,14 @@ public class StartView extends JFrame {
 	private String playerName;
 	private String opponentName;
 
-	public String getOpponentName() {
-		return opponentName;
-	}
-
-	public String getPlayerName() {
-		return playerName;
-	}
-
 	private final String CONFIRM_OPPONENT = "С кем желаете сыграть партию?";
 	private final String CONFIRM_PLAYER_VIEW = "В каком виде отрисовывать поле Морского Боя?";
 	private final String CONFIRM_OPPONENT_VIEW = "В каком виде отрисовывать поле Морского Боя для второго Игрока?";
-
 	private final String CONFIRM_AI_POWER = "С насколько мощным соперником Вы желаете сразиться?";
 	private final String CONFIRM_SHIPS_ARRANGMENT = "Как будете расставлять корабли?";
-	private final String START_THE_GAME = "Добро Пожаловать в Морской Бой! \n Введите Ваше Имя";
-
-	public String getSTART_THE_GAME() {
-		return START_THE_GAME;
-	}
-
-	public String getINPUT_SECOND_PLAYER_NAME() {
-		return INPUT_SECOND_PLAYER_NAME;
-	}
-
+	private final String START_THE_GAME = "Добро Пожаловать в игру Морской Бой! \n Введите Ваше Имя";
 	private final String INPUT_SECOND_PLAYER_NAME = "Введите Имя второго игрока";
+	private final String ERROR_INPUT_MESSAGE = "Необходимо ввести имя игрока или его псевдоним в поле";
 	private final String ERROR_MESSAGE = "Этот выбор уже скоро будет доступен :)";
 
 	public StartView() {
@@ -64,7 +47,14 @@ public class StartView extends JFrame {
 	}
 
 	public String inputPlayerName(String message) {
-		return JOptionPane.showInputDialog(this, message, "", JOptionPane.YES_OPTION);
+		String name = null;
+		while (name == null || name.equals("")) {
+			name = JOptionPane.showInputDialog(this, message, "");
+			if (name == null || name.equals("")) {
+				displayErrorMessage(ERROR_INPUT_MESSAGE);
+			}
+		}
+		return name;
 	}
 
 	public int displayOpponentConfirmMessage(String message) {
@@ -113,5 +103,21 @@ public class StartView extends JFrame {
 
 	public int getShipsArrangementChoice() {
 		return shipsArrangementChoice;
+	}
+
+	public String getOpponentName() {
+		return opponentName;
+	}
+
+	public String getPlayerName() {
+		return playerName;
+	}
+
+	public String getSTART_THE_GAME() {
+		return START_THE_GAME;
+	}
+
+	public String getINPUT_SECOND_PLAYER_NAME() {
+		return INPUT_SECOND_PLAYER_NAME;
 	}
 }

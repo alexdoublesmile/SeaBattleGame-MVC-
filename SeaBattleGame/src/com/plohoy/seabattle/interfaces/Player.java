@@ -10,8 +10,6 @@ public interface Player {
 
 	final static int[] PATTERN = { 4, 3, 3, 2, 2, 2, 1, 1, 1, 1 };
 
-	void createShips();
-
 //	void makeShot();
 
 	Field getShips();
@@ -31,4 +29,8 @@ public interface Player {
 	int getXCoord();
 
 	void setCoords(Field playerShips);
+
+	void createShipsAuto();
+
+	void createField();
 }

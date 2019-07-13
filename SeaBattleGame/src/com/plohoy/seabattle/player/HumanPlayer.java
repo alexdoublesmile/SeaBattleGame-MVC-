@@ -25,39 +25,47 @@ public class HumanPlayer implements Player {
 	private int xCoord;
 	private int yCoord;
 
-	private int createShipsManually;
+	private boolean createShipsManually;
 
 	View theView;
 
 	public HumanPlayer(View theView, int createShipsManually, String name) {
 
 		this.theView = theView;
-		this.createShipsManually = createShipsManually;
 		this.name = name;
+		setCreateShipsManually(createShipsManually);
 
 		shots = new Shots();
 		labels = new Labels();
 
 	}
 
-	@Override
-	public void createShips() {
-		if (createShipsManually == 0) {
-			createShipsAuto();
-		} else {
-			createShipsManually(xCoord, yCoord);
-		}
+	public boolean isCreateShipsManually() {
+		return createShipsManually;
 	}
 
+	public void setCreateShipsManually(int createShipsManually) {
+		if (createShipsManually == 1) {
+			this.createShipsManually = true;
+		}
+		this.createShipsManually = false;
+	}
+
+	@Override
+	public void createField() {
+		ships = new Field(FIELD_SIZE, PATTERN);
+	}
+
+	@Override
 	public void createShipsAuto() {
 		ships = new Field(FIELD_SIZE, PATTERN);
 		ships.setShipsAuto();
 	}
 
-	public void createShipsManually(int x, int y) {
-		ships = new Field(FIELD_SIZE, PATTERN);
-		ships.setShipsManually(x, y);
-	}
+//	public void createShipsManually(int x, int y) {
+//		ships = new Field(FIELD_SIZE, PATTERN);
+//		ships.setShipsManually(x, y);
+//	}
 
 	@Override
 	public View getTheView() {
@@ -81,7 +89,6 @@ public class HumanPlayer implements Player {
 
 	@Override
 	public boolean isAI() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -102,46 +109,4 @@ public class HumanPlayer implements Player {
 		// TODO Auto-generated method stub
 
 	}
-
-//	private String name;
-//	private String password;
-//	private String email;
-//
-//	private int age;
-//
-//	private int score;
-//	private int scoreRecord;
-
-//	public String getName() {
-//		return name;
-//	}
-//
-//	public void setName(String name) {
-//		this.name = name;
-//	}
-//
-//	public int getAge() {
-//		return age;
-//	}
-//
-//	public void setAge(int age) {
-//		this.age = age;
-//	}
-//
-//	public int getScore() {
-//		return score;
-//	}
-//
-//	public void setScore(int score) {
-//		this.score = score;
-//	}
-//
-//	public int getScoreRecord() {
-//		return scoreRecord;
-//	}
-//
-//	public void setScoreRecord(int scoreRecord) {
-//		this.scoreRecord = scoreRecord;
-//	}
-
 }

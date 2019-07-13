@@ -59,5 +59,31 @@ public interface View {
 	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
 			Labels opponentLabels, String playerName, String opponentName);
 
+	String getARRANGE_YOUR_SHIPS();
+
+//	String getCELL_SHOULD_BE_NEW();
+//
+//	String getCELL_SHOULD_NOT_TOUCH_DIAGONAL();
+
+	String getCELL_SHOULD_NOT_TOUCH_SHIP();
+
+	int getManuallyXCoord();
+
+	int getManuallyYCoord();
+
+	void setManuallyCoords();
+
+	void resetManuallyCoords();
+
+	boolean clickIsDone();
+
+	String getCELL_SHOULD_BE_NEW();
+
+	String getSHIP_IS_EXCESS_MESSAGE();
+
+	String getLAST_SHIP_IS_EXCESS_MESSAGE();
+
+//	void resetManuallyCoords();
+
 //	void resetPressCoords();
 }

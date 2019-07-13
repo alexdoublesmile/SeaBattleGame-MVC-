@@ -31,7 +31,7 @@ public class AIPlayer implements Player {
 	}
 
 	@Override
-	public void createShips() {
+	public void createShipsAuto() {
 		if (thePower > 1) {
 			do {
 				ships = new Field(FIELD_SIZE, PATTERN);
@@ -104,5 +104,11 @@ public class AIPlayer implements Player {
 	public Labels getLabels() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void createField() {
+		// TODO Auto-generated method stub
+
 	}
 }

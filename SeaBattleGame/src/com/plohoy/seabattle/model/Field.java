@@ -9,12 +9,48 @@ public class Field {
 	private ArrayList<Cell> fieldTerritory = new ArrayList<Cell>();
 	private ArrayList<Cell> fieldFreeTerritory = new ArrayList<Cell>();
 	private HashSet<Cell> differentAroundCells = new HashSet<Cell>();
+	private ArrayList<Ship> manuallyBattleField = new ArrayList<Ship>();
 	private ArrayList<Ship> battleField = new ArrayList<Ship>();
 	private int fieldSize;
 	private int countAroundCells;
 	private int[] pattern;
+	private final int MAX_NUMBER_OF_ONE_DECK_SHIPS = 4;
+	private final int MAX_NUMBER_OF_TWO_DECK_SHIPS = 3;
+	private final int MAX_NUMBER_OF_THREE_DECK_SHIPS = 2;
+	private final int MAX_NUMBER_OF_FOUR_DECK_SHIPS = 1;
+	private int numberOfOneDeckShips;
+	private int numberOfTwoDeckShips;
+	private int numberOfThreeDeckShips;
+	private int numberOfFourDeckShips;
 
 	private Random random;
+	private Ship tempShip;
+	private Ship lastShip;
+	private Cell lastCell;
+
+	public Cell getLastCell() {
+		return lastCell;
+	}
+
+	public void setLastCell(Cell lastCell) {
+		this.lastCell = lastCell;
+	}
+
+	public Ship getLastShip() {
+		return lastShip;
+	}
+
+	public void setLastShip(Ship lastShip) {
+		this.lastShip = lastShip;
+	}
+
+	public Ship getTempShip() {
+		return tempShip;
+	}
+
+	public void setTempShip(Ship tempShip) {
+		this.tempShip = tempShip;
+	}
 
 	public Field(int fieldSize, int[] pattern) {
 		this.fieldSize = fieldSize;
@@ -61,12 +97,42 @@ public class Field {
 		return countAroundCells;
 	}
 
-	public void setShipsManually(int x, int y) {
-		Ship ship = new Ship(x, y, fieldSize);
-		battleField.add(ship);
-		if (ship.checkShipOutOfField(0, fieldSize - 1) || checkShipTouch(ship)) {
-			battleField.remove(ship);
+	public boolean checkCellIsTheOne(int x, int y) {
+		Cell tryCell = new Cell(x, y);
+		for (Ship ship : battleField) {
+			for (Cell cell : ship.getCells()) {
+				if (cell.getXCoord() == tryCell.getXCoord() && cell.getYCoord() == tryCell.getYCoord()) {
+					return false;
+				}
+			}
 		}
+		return true;
+	}
+
+//	public boolean checkCellIsNotTouchDiagonal(int x, int y) {
+//		Cell tryCell = new Cell(x, y);
+//		for (Ship ship : battleField) {
+//			tryCell.checkCellTouch(ship.getCells());
+//
+//		}
+//		for (Ship ship : battleField) {
+//			for (Cell cell : ship.getCells()) {
+//				if (cell.getXCoord() == tryCell.getXCoord() && cell.getYCoord() == tryCell.getYCoord()) {
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
+
+	public boolean checkCellIsNotTouchAnyShip(int x, int y) {
+		Cell tryCell = new Cell(x, y);
+		for (Ship ship : battleField) {
+			if (tryCell.checkCellTouchDiagonal(ship.getCells())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public void initializeAllTerritory() {
@@ -146,5 +212,120 @@ public class Field {
 
 	public int[] getPattern() {
 		return pattern;
+	}
+
+	public boolean checkLastShipIsProper() {
+		calcNumberOfShips();
+		if (numberOfOneDeckShips <= MAX_NUMBER_OF_ONE_DECK_SHIPS && numberOfTwoDeckShips <= MAX_NUMBER_OF_TWO_DECK_SHIPS
+				&& numberOfThreeDeckShips <= MAX_NUMBER_OF_THREE_DECK_SHIPS
+				&& numberOfFourDeckShips <= MAX_NUMBER_OF_FOUR_DECK_SHIPS) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean checkLastShipIncreasedIsProper() {
+		if (checkLastShipIncreasedByOneIsProper() || checkLastShipIncreasedByTwoIsProper()
+				|| checkLastShipIncreasedByThreeIsProper()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean checkLastShipIncreasedByOneIsProper() {
+		battleField.remove(tempShip);
+		battleField.remove(lastShip);
+		if (!(lastShip == null)) {
+			lastShip.getCells().add(lastCell);
+
+		}
+		battleField.add(lastShip);
+		calcNumberOfShips();
+		if (numberOfOneDeckShips <= MAX_NUMBER_OF_ONE_DECK_SHIPS && numberOfTwoDeckShips <= MAX_NUMBER_OF_TWO_DECK_SHIPS
+				&& numberOfThreeDeckShips <= MAX_NUMBER_OF_THREE_DECK_SHIPS
+				&& numberOfFourDeckShips <= MAX_NUMBER_OF_FOUR_DECK_SHIPS) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean checkLastShipIncreasedByTwoIsProper() {
+		battleField.remove(tempShip);
+		battleField.remove(lastShip);
+		lastShip.getCells().add(lastCell);
+		lastShip.getCells().add(new Cell(lastCell.getXCoord() + 1, lastCell.getYCoord()));
+		battleField.add(lastShip);
+		calcNumberOfShips();
+		if (numberOfOneDeckShips <= MAX_NUMBER_OF_ONE_DECK_SHIPS && numberOfTwoDeckShips <= MAX_NUMBER_OF_TWO_DECK_SHIPS
+				&& numberOfThreeDeckShips <= MAX_NUMBER_OF_THREE_DECK_SHIPS
+				&& numberOfFourDeckShips <= MAX_NUMBER_OF_FOUR_DECK_SHIPS) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public boolean checkLastShipIncreasedByThreeIsProper() {
+		battleField.remove(tempShip);
+		battleField.remove(lastShip);
+		lastShip.getCells().add(lastCell);
+		lastShip.getCells().add(new Cell(lastCell.getXCoord() + 1, lastCell.getYCoord()));
+		lastShip.getCells().add(new Cell(lastCell.getXCoord() + 2, lastCell.getYCoord()));
+		battleField.add(lastShip);
+		calcNumberOfShips();
+		if (numberOfOneDeckShips <= MAX_NUMBER_OF_ONE_DECK_SHIPS && numberOfTwoDeckShips <= MAX_NUMBER_OF_TWO_DECK_SHIPS
+				&& numberOfThreeDeckShips <= MAX_NUMBER_OF_THREE_DECK_SHIPS
+				&& numberOfFourDeckShips <= MAX_NUMBER_OF_FOUR_DECK_SHIPS) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+	public boolean patternIsProper() {
+		calcNumberOfShips();
+		if (numberOfOneDeckShips == MAX_NUMBER_OF_ONE_DECK_SHIPS && numberOfTwoDeckShips == MAX_NUMBER_OF_TWO_DECK_SHIPS
+				&& numberOfThreeDeckShips == MAX_NUMBER_OF_THREE_DECK_SHIPS
+				&& numberOfFourDeckShips == MAX_NUMBER_OF_FOUR_DECK_SHIPS) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public void calcNumberOfShips() {
+
+		int numberOfDecks = 0;
+		numberOfOneDeckShips = 0;
+		numberOfTwoDeckShips = 0;
+		numberOfThreeDeckShips = 0;
+		numberOfFourDeckShips = 0;
+		for (Ship ship : battleField) {
+			for (Cell cell : ship.getCells()) {
+				numberOfDecks++;
+			}
+			switch (numberOfDecks) {
+			case (1):
+				numberOfOneDeckShips++;
+				break;
+			case (2):
+				numberOfTwoDeckShips++;
+				break;
+			case (3):
+				numberOfThreeDeckShips++;
+				break;
+			case (4):
+				numberOfFourDeckShips++;
+				break;
+			default:
+				break;
+			}
+			numberOfDecks = 0;
+		}
 	}
 }

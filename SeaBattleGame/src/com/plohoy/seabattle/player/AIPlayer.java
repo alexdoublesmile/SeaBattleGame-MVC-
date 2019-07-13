@@ -9,24 +9,19 @@ import com.plohoy.seabattle.model.Shots;
 
 public class AIPlayer implements Player {
 
-	private final String name = "»»";
-
+	private final String AI_NAME = "»»";
+	private final int thePower;
+	private final int MAX_AROUND_CELLS = 52;
 	private Field ships;
 	private Shots shots;
 	private AIShot aIShot;
-
 	private int xCoord;
 	private int yCoord;
-//	private final boolean IS_AI = true;
-
-	private final int thePower;
-	private final int MAX_AROUND_CELLS = 50;
 
 	public AIPlayer(int thePower) {
 
 		this.thePower = thePower;
 		shots = new Shots();
-
 		aIShot = new AIShot(thePower, FIELD_SIZE, PATTERN);
 	}
 
@@ -44,8 +39,17 @@ public class AIPlayer implements Player {
 	}
 
 	@Override
+	public void setCoords(Field playerShips) {
+		do {
+			aIShot.aIMakesShot(shots, playerShips);
+		} while (shots.shotSamePlace(aIShot.getXShotCoord(), aIShot.getYShotCoord()));
+		xCoord = aIShot.getXShotCoord();
+		yCoord = aIShot.getYShotCoord();
+	}
+
+	@Override
 	public String getName() {
-		return name;
+		return AI_NAME;
 	}
 
 	@Override
@@ -79,15 +83,6 @@ public class AIPlayer implements Player {
 
 	public void setyCoord(int yCoord) {
 		this.yCoord = yCoord;
-	}
-
-	@Override
-	public void setCoords(Field playerShips) {
-		do {
-			aIShot.aIMakesShot(shots, playerShips);
-		} while (shots.shotSamePlace(aIShot.getXShotCoord(), aIShot.getYShotCoord()));
-		xCoord = aIShot.getXShotCoord();
-		yCoord = aIShot.getYShotCoord();
 	}
 
 	public AIShot getAIShot() {

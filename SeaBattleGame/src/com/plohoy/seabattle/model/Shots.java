@@ -11,10 +11,6 @@ public class Shots {
 		shots = new LinkedList<Shot>();
 	}
 
-	public LinkedList<Shot> getShots() {
-		return shots;
-	}
-
 	public void add(int x, int y, boolean shot) {
 		shots.add(new Shot(x, y, shot));
 	}
@@ -26,5 +22,9 @@ public class Shots {
 			}
 		}
 		return false;
+	}
+
+	public LinkedList<Shot> getShots() {
+		return shots;
 	}
 }

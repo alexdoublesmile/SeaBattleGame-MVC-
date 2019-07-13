@@ -12,7 +12,9 @@ public class Launcher {
 
 	@SuppressWarnings("unused")
 	public void exec() {
+
 		StartView newStartView = new StartView();
+
 		StartModel newStartModel = new StartModel();
 
 		Player firstPlayer = new HumanPlayer(newStartModel.viewChoose(newStartView.getPlayerViewChoice()),

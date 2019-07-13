@@ -6,14 +6,6 @@ import javax.swing.JOptionPane;
 @SuppressWarnings("serial")
 public class StartView extends JFrame {
 
-	private int opponentChoice;
-	private int playerViewChoice;
-	private int opponentViewChoice;
-	private int aIPowerChoice;
-	private int shipsArrangementChoice;
-	private String playerName;
-	private String opponentName;
-
 	private final String CONFIRM_OPPONENT = "С кем желаете сыграть партию?";
 	private final String CONFIRM_PLAYER_VIEW = "В каком виде отрисовывать поле Морского Боя?";
 	private final String CONFIRM_OPPONENT_VIEW = "В каком виде отрисовывать поле Морского Боя для второго Игрока?";
@@ -23,6 +15,14 @@ public class StartView extends JFrame {
 	private final String INPUT_SECOND_PLAYER_NAME = "Введите Имя второго игрока";
 	private final String ERROR_INPUT_MESSAGE = "Необходимо ввести имя игрока или его псевдоним в поле";
 	private final String ERROR_MESSAGE = "Этот выбор уже скоро будет доступен :)";
+
+	private int opponentChoice;
+	private int playerViewChoice;
+	private int opponentViewChoice;
+	private int aIPowerChoice;
+	private int shipsArrangementChoice;
+	private String playerName;
+	private String opponentName;
 
 	public StartView() {
 		playerName = inputPlayerName(START_THE_GAME);

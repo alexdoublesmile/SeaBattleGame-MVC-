@@ -14,25 +14,24 @@ public class AIShot {
 
 	private Shots aIShots;
 	private Field aIShips;
+	private Cell lastCell;
+
 	private int fieldSize;
+	private int xShotCoord;
+	private int yShotCoord;
+	private int thePower = 0;
+	private int score;
+	private boolean coordsAreReady = false;
+	private boolean mainAxisIsX;
+	private boolean mainAxisIsY;
+	private int randomIndex;
+	private int[] pattern;
 
 	private ArrayList<Cell> cellTerritory = new ArrayList<Cell>();
 	private ArrayList<Cell> fieldTerritory = new ArrayList<Cell>();
 	private ArrayList<Cell> copyFieldTerritory = new ArrayList<Cell>();
 	private ArrayList<Cell> tempBestShots = new ArrayList<Cell>();
-
 	private HashSet<Cell> removeDuplicatesFromCellList;
-	private int xShotCoord;
-	private int yShotCoord;
-	private boolean coordsAreReady = false;
-	private Cell lastCell;
-
-	private boolean mainAxisIsX;
-	private boolean mainAxisIsY;
-	private int randomIndex;
-
-	private int[] pattern;
-//	private TreeSet<Integer> typesOfShips = new TreeSet<Integer>();
 
 	private int numberOfStartOneDeckShips;
 	private int numberOfStartTwoDeckShips;
@@ -47,9 +46,6 @@ public class AIShot {
 	private int numberOfAliveThreeDeckShips;
 	private int numberOfAliveFourDeckShips;
 
-	private int thePower = 0;
-	private int score;
-
 	private Random random = new Random();
 
 	public AIShot(int power, int fieldSize, int[] pattern) {
@@ -59,21 +55,6 @@ public class AIShot {
 		this.fieldSize = fieldSize;
 		setNumberOfAllTypesShips();
 		initializeAllTerritory();
-//		for(int i = 0; i < pattern.length; i++) {
-//			typesOfShips.add(pattern[i]);
-//		}
-	}
-
-	public int getXShotCoord() {
-		return xShotCoord;
-	}
-
-	public int getYShotCoord() {
-		return yShotCoord;
-	}
-
-	public void setLastCell(Cell lastCell) {
-		this.lastCell = lastCell;
 	}
 
 	public void aIMakesShot(Shots opponentShots, Field playerShips) {
@@ -95,25 +76,7 @@ public class AIShot {
 			coordsAreReady = false;
 			smartShot();
 			if (!coordsAreReady) {
-
-				System.out.println("------ координаты не готовы - вычисл€ем из пустых -------");
 				intuitiveShot();
-//				System.out.println("----------------------------------------------------------");
-//				System.out.println("------ всего однопалубных: " + numberOfStartOneDeckShips);
-//				System.out.println("------ всего двухпалубных: " + numberOfStartTwoDeckShips);
-//				System.out.println("------ всего трехпалубных: " + numberOfStartThreeDeckShips);
-//				System.out.println("------ всего четырехпалубных: " + numberOfStartFourDeckShips);
-//				System.out.println("----------------------------------------------------------");
-//				System.out.println("------ потопленных однопалубных: " + numberOfShotDownOneDeckShips);
-//				System.out.println("------ потопленных двухпалубных: " + numberOfShotDownTwoDeckShips);
-//				System.out.println("------ потопленных трехпалубных: " + numberOfShotDownThreeDeckShips);
-//				System.out.println("------ потопленных четырехпалубных: " + numberOfShotDownFourDeckShips);
-				System.out.println("----------------------------------------------------------");
-				System.out.println("------ количество живых 1-палубных: " + numberOfAliveOneDeckShips);
-				System.out.println("------ количество живых 2-палубных: " + numberOfAliveTwoDeckShips);
-				System.out.println("------ количество живых 3-палубных: " + numberOfAliveThreeDeckShips);
-				System.out.println("------ количество живых 4-палубных: " + numberOfAliveFourDeckShips);
-//				randomShot();
 			}
 			break;
 		default:
@@ -132,9 +95,6 @@ public class AIShot {
 			if (ship.checkShipIsShotDown()) {
 				if (moreThanOneCellHit(ship)) {
 
-					System.out.println("----------------------------------------------------------");
-					System.out.println("---------------------- подбито несколько палуб ---------");
-
 					whatIsMainAxis(ship);
 					setExtremeShotDownCellsTerritoty(ship);
 
@@ -143,44 +103,61 @@ public class AIShot {
 					yShotCoord = cellTerritory.get(randomIndex).getYCoord();
 					coordsAreReady = true;
 					cellTerritory.clear();
-
-					System.out.println("----------------------------------------------------------");
-					System.out.println("------------------- сформированы умные координаты: (" + (xShotCoord + 1) + ", "
-							+ (yShotCoord + 1) + ")");
-
 				} else {
 
-					System.out.println("----------------------------------------------------------");
-					System.out.println("---------------------- подбита только одна палуба ---------");
-
-					System.out.println(
-							"----------- lastCell: (" + lastCell.getXCoord() + ", " + lastCell.getYCoord() + ")");
 					setShotDownCellTerritory(lastCell);
-
-					System.out.println("----------------------------------------------------------");
-					System.out.print("--- сформирована область вокруг убитой €чейки (" + (lastCell.getXCoord() + 1)
-							+ ", " + (lastCell.getYCoord() + 1) + ") корабл€ ");
-					for (Cell cellShip : ship.getCells()) {
-						System.out.print("(" + (cellShip.getXCoord() + 1) + ", " + (cellShip.getYCoord() + 1) + ") ");
-					}
-					System.out.println("");
-					int n = 1;
-					for (Cell cellTerr : cellTerritory) {
-						System.out.println("€чейка " + n + ": (" + (cellTerr.getXCoord() + 1) + ", "
-								+ (cellTerr.getYCoord() + 1) + ")");
-						n++;
-					}
 
 					randomIndex = new Random().nextInt(cellTerritory.size());
 					xShotCoord = cellTerritory.get(randomIndex).getXCoord();
 					yShotCoord = cellTerritory.get(randomIndex).getYCoord();
 					coordsAreReady = true;
 					cellTerritory.clear();
+				}
+			}
+		}
+	}
 
-					System.out.println("----------------------------------------------------------");
-					System.out.println("------------------- сформированы умные координаты: (" + (xShotCoord + 1) + ", "
-							+ (yShotCoord + 1) + ")");
+	public void intuitiveShot() {
+		calcNumberOfAliveShips();
+		if (numberOfAliveFourDeckShips == 0 && numberOfAliveThreeDeckShips == 0 && numberOfAliveTwoDeckShips == 0) {
+			randomShot();
+		} else {
+			masterShot();
+		}
+	}
 
+	public void masterShot() {
+		if (!(numberOfAliveFourDeckShips == 0)) {
+			System.out.println("------------------------------");
+			System.out.println("есть живой 4 палубный..");
+			initializeFreeTerritory();
+			copyFreeTerritory();
+			findXLineOfFourCells();
+			findYLineOfFourCells();
+			removeDuplicatesFromCellList(tempBestShots);
+			findBestCoordinates();
+		} else {
+			if (!(numberOfAliveThreeDeckShips == 0)) {
+				System.out.println("------------------------------");
+				System.out.println("есть живой 3 палубный..");
+
+				initializeFreeTerritory();
+				copyFreeTerritory();
+				findXLineOfThreeCells();
+				findYLineOfThreeCells();
+				removeDuplicatesFromCellList(tempBestShots);
+				findBestCoordinates();
+			} else {
+				if (!(numberOfAliveTwoDeckShips == 0)) {
+					System.out.println("------------------------------");
+					System.out.println("есть живой 2 палубный..");
+
+					initializeFreeTerritory();
+					copyFreeTerritory();
+					findXLineOfTwoCells();
+					findYLineOfTwoCells();
+					removeDuplicatesFromCellList(tempBestShots);
+					findBestCoordinates();
 				}
 			}
 		}
@@ -479,55 +456,6 @@ public class AIShot {
 		firstCellYCoord = fieldSize;
 	}
 
-	public void intuitiveShot() {
-		calcNumberOfAliveShips();
-
-		if (numberOfAliveFourDeckShips == 0 && numberOfAliveThreeDeckShips == 0 && numberOfAliveTwoDeckShips == 0) {
-			System.out.println("------------------------------");
-			System.out.println("стрел€ем наобум..");
-			randomShot();
-		} else {
-			masterShot();
-		}
-	}
-
-	public void masterShot() {
-		if (!(numberOfAliveFourDeckShips == 0)) {
-			System.out.println("------------------------------");
-			System.out.println("есть живой 4 палубный..");
-			initializeFreeTerritory();
-			copyFreeTerritory();
-			findXLineOfFourCells();
-			findYLineOfFourCells();
-			removeDuplicatesFromCellList(tempBestShots);
-			findBestCoordinates();
-		} else {
-			if (!(numberOfAliveThreeDeckShips == 0)) {
-				System.out.println("------------------------------");
-				System.out.println("есть живой 3 палубный..");
-
-				initializeFreeTerritory();
-				copyFreeTerritory();
-				findXLineOfThreeCells();
-				findYLineOfThreeCells();
-				removeDuplicatesFromCellList(tempBestShots);
-				findBestCoordinates();
-			} else {
-				if (!(numberOfAliveTwoDeckShips == 0)) {
-					System.out.println("------------------------------");
-					System.out.println("есть живой 2 палубный..");
-
-					initializeFreeTerritory();
-					copyFreeTerritory();
-					findXLineOfTwoCells();
-					findYLineOfTwoCells();
-					removeDuplicatesFromCellList(tempBestShots);
-					findBestCoordinates();
-				}
-			}
-		}
-	}
-
 	public void setNumberOfAllTypesShips() {
 		for (int i = 0; i < pattern.length; i++) {
 			switch (pattern[i]) {
@@ -821,5 +749,17 @@ public class AIShot {
 		yShotCoord = tempBestShots.get(randomIndex).getYCoord();
 		coordsAreReady = true;
 		tempBestShots.clear();
+	}
+
+	public int getXShotCoord() {
+		return xShotCoord;
+	}
+
+	public int getYShotCoord() {
+		return yShotCoord;
+	}
+
+	public void setLastCell(Cell lastCell) {
+		this.lastCell = lastCell;
 	}
 }

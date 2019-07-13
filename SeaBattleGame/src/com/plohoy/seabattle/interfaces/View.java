@@ -6,14 +6,7 @@ import com.plohoy.seabattle.model.Shots;
 
 public interface View {
 
-//	void viewGame(Field playerField, Shots playerShots, Labels playerLabels, Field opponentField, Shots opponentShots,
-//			Labels opponentLabels);
-
 	void playAgain();
-
-//	void setBattlefieldSize(int battlefieldSize);
-
-//	int getBattlefieldSize();
 
 	int getPlayAgainAnswer();
 
@@ -61,10 +54,6 @@ public interface View {
 
 	String getARRANGE_YOUR_SHIPS();
 
-//	String getCELL_SHOULD_BE_NEW();
-//
-//	String getCELL_SHOULD_NOT_TOUCH_DIAGONAL();
-
 	String getCELL_SHOULD_NOT_TOUCH_SHIP();
 
 	int getManuallyXCoord();
@@ -82,8 +71,4 @@ public interface View {
 	String getSHIP_IS_EXCESS_MESSAGE();
 
 	String getLAST_SHIP_IS_EXCESS_MESSAGE();
-
-//	void resetManuallyCoords();
-
-//	void resetPressCoords();
 }

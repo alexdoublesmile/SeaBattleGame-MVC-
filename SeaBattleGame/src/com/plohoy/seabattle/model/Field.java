@@ -6,14 +6,6 @@ import java.util.Random;
 
 public class Field {
 
-	private ArrayList<Cell> fieldTerritory = new ArrayList<Cell>();
-	private ArrayList<Cell> fieldFreeTerritory = new ArrayList<Cell>();
-	private HashSet<Cell> differentAroundCells = new HashSet<Cell>();
-	private ArrayList<Ship> manuallyBattleField = new ArrayList<Ship>();
-	private ArrayList<Ship> battleField = new ArrayList<Ship>();
-	private int fieldSize;
-	private int countAroundCells;
-	private int[] pattern;
 	private final int MAX_NUMBER_OF_ONE_DECK_SHIPS = 4;
 	private final int MAX_NUMBER_OF_TWO_DECK_SHIPS = 3;
 	private final int MAX_NUMBER_OF_THREE_DECK_SHIPS = 2;
@@ -22,35 +14,19 @@ public class Field {
 	private int numberOfTwoDeckShips;
 	private int numberOfThreeDeckShips;
 	private int numberOfFourDeckShips;
+	private ArrayList<Cell> fieldTerritory = new ArrayList<Cell>();
+	private ArrayList<Cell> fieldFreeTerritory = new ArrayList<Cell>();
+	private HashSet<Cell> differentAroundCells = new HashSet<Cell>();
+	private ArrayList<Ship> manuallyBattleField = new ArrayList<Ship>();
+	private ArrayList<Ship> battleField = new ArrayList<Ship>();
+	private int fieldSize;
+	private int countAroundCells;
+	private int[] pattern;
 
 	private Random random;
 	private Ship tempShip;
 	private Ship lastShip;
 	private Cell lastCell;
-
-	public Cell getLastCell() {
-		return lastCell;
-	}
-
-	public void setLastCell(Cell lastCell) {
-		this.lastCell = lastCell;
-	}
-
-	public Ship getLastShip() {
-		return lastShip;
-	}
-
-	public void setLastShip(Ship lastShip) {
-		this.lastShip = lastShip;
-	}
-
-	public Ship getTempShip() {
-		return tempShip;
-	}
-
-	public void setTempShip(Ship tempShip) {
-		this.tempShip = tempShip;
-	}
 
 	public Field(int fieldSize, int[] pattern) {
 		this.fieldSize = fieldSize;
@@ -89,14 +65,6 @@ public class Field {
 		System.out.println("количество клеток территории: " + countAroundCells);
 	}
 
-	public HashSet<Cell> getDifferentAroundCells() {
-		return differentAroundCells;
-	}
-
-	public int getCountAroundCells() {
-		return countAroundCells;
-	}
-
 	public boolean checkCellIsTheOne(int x, int y) {
 		Cell tryCell = new Cell(x, y);
 		for (Ship ship : battleField) {
@@ -108,22 +76,6 @@ public class Field {
 		}
 		return true;
 	}
-
-//	public boolean checkCellIsNotTouchDiagonal(int x, int y) {
-//		Cell tryCell = new Cell(x, y);
-//		for (Ship ship : battleField) {
-//			tryCell.checkCellTouch(ship.getCells());
-//
-//		}
-//		for (Ship ship : battleField) {
-//			for (Cell cell : ship.getCells()) {
-//				if (cell.getXCoord() == tryCell.getXCoord() && cell.getYCoord() == tryCell.getYCoord()) {
-//					return false;
-//				}
-//			}
-//		}
-//		return true;
-//	}
 
 	public boolean checkCellIsNotTouchAnyShip(int x, int y) {
 		Cell tryCell = new Cell(x, y);
@@ -200,18 +152,6 @@ public class Field {
 			}
 		}
 		return false;
-	}
-
-	public ArrayList<Ship> getBattleField() {
-		return battleField;
-	}
-
-	public void setPattern(int[] pattern) {
-		this.pattern = pattern;
-	}
-
-	public int[] getPattern() {
-		return pattern;
 	}
 
 	public boolean checkLastShipIsProper() {
@@ -327,5 +267,49 @@ public class Field {
 			}
 			numberOfDecks = 0;
 		}
+	}
+
+	public ArrayList<Ship> getBattleField() {
+		return battleField;
+	}
+
+	public void setPattern(int[] pattern) {
+		this.pattern = pattern;
+	}
+
+	public int[] getPattern() {
+		return pattern;
+	}
+
+	public Cell getLastCell() {
+		return lastCell;
+	}
+
+	public void setLastCell(Cell lastCell) {
+		this.lastCell = lastCell;
+	}
+
+	public Ship getLastShip() {
+		return lastShip;
+	}
+
+	public void setLastShip(Ship lastShip) {
+		this.lastShip = lastShip;
+	}
+
+	public Ship getTempShip() {
+		return tempShip;
+	}
+
+	public void setTempShip(Ship tempShip) {
+		this.tempShip = tempShip;
+	}
+
+	public HashSet<Cell> getDifferentAroundCells() {
+		return differentAroundCells;
+	}
+
+	public int getCountAroundCells() {
+		return countAroundCells;
 	}
 }

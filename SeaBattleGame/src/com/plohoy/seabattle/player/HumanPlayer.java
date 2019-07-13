@@ -9,22 +9,11 @@ import com.plohoy.seabattle.model.Shots;
 public class HumanPlayer implements Player {
 
 	private String name;
-
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	private Field ships;
 	private Shots shots;
 	private Labels labels;
 	private int xCoord;
 	private int yCoord;
-
 	private boolean createShipsManually;
 
 	View theView;
@@ -62,10 +51,14 @@ public class HumanPlayer implements Player {
 		ships.setShipsAuto();
 	}
 
-//	public void createShipsManually(int x, int y) {
-//		ships = new Field(FIELD_SIZE, PATTERN);
-//		ships.setShipsManually(x, y);
-//	}
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	@Override
 	public View getTheView() {
